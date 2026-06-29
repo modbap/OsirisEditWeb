@@ -4,7 +4,7 @@
   "description": "Browser-based wavetable editor for the Modbap Osiris — a web port of OsirisEdit (lineage: WaveEdit by Andrew Belt).",
   "type": "module",
   "scripts": {
-    "test": "node test/verify-dsp.mjs && node test/check-logic.mjs && node test/check-wavpak.mjs && node test/smoke-ui.mjs",
+    "test": "node test/verify-dsp.mjs && node test/check-logic.mjs && node test/check-wavpak.mjs && node test/check-generate.mjs && node test/smoke-ui.mjs",
     "test:dsp": "node test/verify-dsp.mjs",
     "test:logic": "node test/check-logic.mjs",
     "test:wavpak": "node test/check-wavpak.mjs",

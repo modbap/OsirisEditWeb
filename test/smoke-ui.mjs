@@ -32,6 +32,18 @@ try {
   console.log('Queue rows after 2 adds:', (window.document.querySelector('#cvQueue').innerHTML.match(/<br>/g)||[]).length+1);
   click('#cvDoConvert');              // should build zip + close, no throw
   console.log('Modal closed after convert:', modal.style.display==='none' ? 'yes ✓':'NO');
+  // Generate feature
+  click('#mGenerate');
+  const gm = window.document.querySelector('#generateModal');
+  console.log('Generate modal opens:', gm && gm.style.display==='flex' ? 'yes ✓':'NO');
+  console.log('Generator buttons:', window.document.querySelectorAll('#genButtons button').length, '(expect 5)');
+  const firstGen = window.document.querySelector('#genButtons button');
+  if(firstGen) firstGen.dispatchEvent(new window.Event('click',{bubbles:true}));
+  console.log('Re-roll visible after generate:', window.document.querySelector('#genReroll').style.display!=='none' ? 'yes ✓':'NO');
+  // Help menu
+  click('#mHelp');
+  console.log('Help menu opens:', window.document.querySelector('#helpMenu').classList.contains('open') ? 'yes ✓':'NO');
+  console.log('Manual links present:', window.document.querySelectorAll('#helpMenu a').length, '(expect 2)');
 } catch(e){ errors.push('UI THROW: '+e.message); }
 console.log('Errors:', errors.length); errors.slice(0,6).forEach(e=>console.log('  •',e));
 console.log(errors.length===0?'UI SMOKE TEST PASS ✓':'see errors');

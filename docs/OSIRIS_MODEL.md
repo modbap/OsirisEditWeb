@@ -1,6 +1,6 @@
 # Osiris terminology & data model (authoritative)
 
-Source: *OSIRISedit User Manual v1* (`docs/OsirisEdit_User_Manual_v1.pdf`), Definitions page.
+Source: *OSIRISedit User Manual v1* (hosted at cdn.shopify.com), Definitions page.
 This is the canonical vocabulary. It differs from the upstream WaveEdit naming —
 **follow Osiris terms, not WaveEdit terms**, in all UI text and user-facing docs.
 

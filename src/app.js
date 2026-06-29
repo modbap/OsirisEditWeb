@@ -1,5 +1,6 @@
 import { Wave, WAVE_LEN, EFFECTS_LEN, EffectID, effectNames, RFFT, IRFFT } from './wave.js';
 import { convertToWavPak, parseWavetableWav, SAMPLE_RATES, BIT_DEPTHS, BANK_SIZES, WAVE_LENGTHS, WAVETABLE_LENGTHS } from './wavpak.js';
+import { generateWavetable, GENERATORS } from './generate.js';
 
 const BANK_LEN = 32, GW = 8, GH = 8;
 const clampf = (x,a,b)=> x>b?b:x<a?a:x;
@@ -315,7 +316,29 @@ function bind(){
 
   $('#wfAngle').oninput=drawWaterfall; $('#wfAmp').oninput=drawWaterfall;
 
-  // --- Convert / WavPak ---
+  // --- Generate wavetable ---
+  const genSubs={harmonic:'smooth · musical',additive:'evolving texture',catalog:'classic shapes',glitch:'chaotic · bright',fm:'metallic · swept'};
+  const gb=$('#genButtons');
+  Object.entries(GENERATORS).forEach(([kind,g])=>{ const b=document.createElement('button');
+    b.innerHTML=`${g.label}<span class="gen-sub">${genSubs[kind]||''}</span>`; b.dataset.kind=kind;
+    b.onclick=()=>runGenerate(kind); gb.append(b); });
+  let lastGenKind=null;
+  function runGenerate(kind){ const coh=+$('#genCoh').value;
+    const waves=generateWavetable(kind,{coherence:coh});
+    for(let j=0;j<BANK_LEN;j++){ bank[j].clear(); bank[j].samples.set(waves[j]); bank[j].commitSamples(); }
+    lastGenKind=kind; $('#genReroll').style.display='';
+    refreshAll();
+    $('#genStatus').textContent=`Generated 32 waveforms — ${GENERATORS[kind].label}, coherence ${coh.toFixed(2)}. Re-roll for a new random set.`;
+    status(`Generated wavetable: ${GENERATORS[kind].label} (coherence ${coh.toFixed(2)})`); }
+  $('#mGenerate').onclick=()=>{ $('#generateModal').style.display='flex'; };
+
+  // Help / Manual dropdown
+  $('#mHelp').onclick=(e)=>{ e.stopPropagation(); $('#helpMenu').classList.toggle('open'); };
+  document.addEventListener('click',()=>$('#helpMenu').classList.remove('open'));
+  $('#helpMenu').onclick=(e)=>e.stopPropagation();
+  $('#genClose').onclick=()=>{ $('#generateModal').style.display='none'; };
+  $('#genCoh').oninput=e=>{ $('#genCohV').textContent=(+e.target.value).toFixed(2); };
+  $('#genReroll').onclick=()=>{ if(lastGenKind) runGenerate(lastGenKind); };
   const cvFill=(sel,opts,def)=>{const e=$(sel);e.innerHTML='';opts.forEach(o=>{const op=document.createElement('option');op.value=o;op.textContent=o;if(o===def)op.selected=true;e.append(op);});};
   cvFill('#cvRate',SAMPLE_RATES,'44100'); cvFill('#cvDepth',BIT_DEPTHS,'16');
   cvFill('#cvBankLen',WAVETABLE_LENGTHS,'32'); cvFill('#cvWaveLen',WAVE_LENGTHS,'256');

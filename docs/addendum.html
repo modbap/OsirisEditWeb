@@ -1,0 +1,102 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>OsirisEdit Web — Addendum</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+  :root{--paper:#f5f2ed;--paper-warm:#ede9e2;--ink:#191714;--muted:#8c877f;--line:#d5cfc6;
+    --rose:#AC296C;--blue:#0489D8;--ui:'Montserrat',sans-serif;--body:'Inter',sans-serif;--logo:'Barlow Condensed',sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper-warm);color:var(--ink);font-family:var(--body);line-height:1.6;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--rose);padding-bottom:18px;margin-bottom:8px}
+  .wordmark{font-family:var(--logo);font-weight:800;font-size:34px;line-height:.9;text-transform:uppercase;letter-spacing:-.01em}
+  .wordmark .edit{color:var(--rose)}
+  .wordmark .web{font-family:var(--ui);font-weight:500;font-size:12px;letter-spacing:.14em;color:var(--muted);vertical-align:7px;margin-left:10px}
+  .mmark{font-family:var(--logo);font-weight:800;font-size:30px;line-height:.8}
+  .mmark .dot{color:var(--blue)}
+  .doctitle{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:6px 0 30px}
+  h2{font-family:var(--ui);font-weight:700;font-size:20px;letter-spacing:-.01em;margin:34px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h2:first-of-type{border-top:none;padding-top:0}
+  h3{font-family:var(--ui);font-weight:600;font-size:14px;letter-spacing:.02em;margin:20px 0 4px;color:var(--rose)}
+  p{margin:8px 0}
+  ul{margin:8px 0 8px 0;padding-left:20px}
+  li{margin:5px 0}
+  code{font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:.88em;background:var(--paper);
+    border:1px solid var(--line);border-radius:3px;padding:1px 5px}
+  .lead{font-size:17px;color:var(--ink)}
+  .muted{color:var(--muted)}
+  .pill{display:inline-block;font-family:var(--ui);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    background:var(--rose);color:#fff;border-radius:10px;padding:2px 9px;vertical-align:2px;margin-left:8px}
+  .note{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:0 6px 6px 0;padding:12px 14px;margin:14px 0}
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  a{color:var(--blue)}
+  .ver{font-family:var(--ui);font-size:12px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="wordmark">OSIRIS<span class="edit">EDIT</span><span class="web">WEB</span></div>
+    </div>
+    <div class="mmark">m<span class="dot">.</span></div>
+  </header>
+  <div class="doctitle">Web Edition Addendum · changes &amp; new features</div>
+
+  <p class="lead">This addendum covers what the browser version of OsirisEdit adds or changes versus the
+  original <em>OSIRISedit User Manual v1</em>. For all core concepts — waveforms, wavetables, harmonics,
+  the effect chain, morphing — the v1 manual still applies. Everything here is additive.</p>
+
+  <div class="note">OsirisEdit Web runs entirely in the browser at <a href="https://osirisedit.modbap.com">osirisedit.modbap.com</a>
+  — no install, no native binary, on macOS, Windows, Linux, or iPad. It replaces the discontinued desktop
+  build (which relied on Apple's Rosetta) while keeping the DSP faithful to the original.</p>
+
+  <h2>DSP fidelity</h2>
+  <p>The wavetable engine is a faithful port of the original. All twelve effects, the FFT conventions, and the
+  harmonic model were verified against the original C++ to within floating-point rounding (~1e-5). Banks you
+  build here are intended to match what the desktop app produced.</p>
+
+  <h2>Convert → WavPak <span class="pill">new in web</span></h2>
+  <p>Because the browser has no folders, Convert works a little differently from the desktop dialog while
+  producing the same output:</p>
+  <ul>
+    <li>Open <code>Convert → WavPak</code> from the header.</li>
+    <li>Choose <strong>Sample Rate</strong>, <strong>Bit Depth</strong> (8/16/32), <strong>Bank Length</strong> (16/32/64), and <strong>Wave Length</strong>.</li>
+    <li>Add the <strong>current wavetable</strong> and/or upload saved <strong>.wav wavetables</strong> to the queue (up to 128).</li>
+    <li>With <strong>Separate into WavPak banks A–D</strong> checked, the download is a <code>.zip</code> containing
+      <code>Osiris/A</code>, <code>/B</code>, <code>/C</code>, <code>/D</code> folders — 32 wavetables per letter — matching the SD-card layout.</li>
+    <li>Unzip onto your Osiris SD card.</li>
+  </ul>
+  <h3>Faithful vs. Corrected mode</h3>
+  <p>The original Convert has a quirk: for Wave Length &gt; 256 or Bank Length &gt; 32 it reads past the wave buffers,
+  producing a specific tail. <strong>Faithful</strong> (default) reproduces that exactly, so existing banks stay
+  bit-identical. <strong>Corrected</strong> zero-pads and clamps instead, for clean results at those settings.</p>
+
+  <h2>Generate Wavetable <span class="pill">new in web</span></h2>
+  <p>Fill all 32 waveforms with generated content in one click via <code>⚡ Generate</code>. Five generators:</p>
+  <ul>
+    <li><strong>Harmonic Morph</strong> — interpolates a start spectrum to an end spectrum. Smooth, musical Z-morphs.</li>
+    <li><strong>Additive Random</strong> — random harmonic stacks with falloff, lightly correlated for evolving textures.</li>
+    <li><strong>Catalog Shapes</strong> — morphs between classic waveforms (sine, saw, square, pulse, triangle, formant).</li>
+    <li><strong>Glitch / Chaos</strong> — sparse bright spectra plus sample glitches for harsh, digital textures.</li>
+    <li><strong>FM / Phase Distortion</strong> — a carrier modulated by a swept ratio and index. Metallic, evolving.</li>
+  </ul>
+  <p>The <strong>Coherence</strong> slider sets how smoothly the 32 waves evolve across the morph: <code>1</code> glides
+  wave-to-wave, <code>0</code> makes each wave independent. <strong>Re-roll</strong> generates a fresh random set with the same generator.</p>
+
+  <h2>Light / Dark theme <span class="pill">new in web</span></h2>
+  <p>The <code>◐ Theme</code> button toggles between the warm-paper light theme and a dark theme. Your choice is remembered.</p>
+
+  <h2>Terminology</h2>
+  <p>The web version uses Osiris terms throughout, matching the manual's definitions: a <strong>waveform</strong> is
+  256 samples; a <strong>wavetable</strong> is the set of 32 waveforms you edit; a <strong>bank / WavPak</strong> is the
+  A/B/C/D SD-card structure produced by Convert. (The upstream WaveEdit app called a wavetable a "bank" — that
+  naming is not used here.)</p>
+
+  <footer>
+    <span>Modbap Modular · Beatppl</span>
+    <span class="ver">Addendum updated for Generate + Convert. See <a href="https://osirisedit.modbap.com">osirisedit.modbap.com</a></span>
+  </footer>
+</div>

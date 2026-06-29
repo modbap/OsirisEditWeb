@@ -66,6 +66,19 @@
   .mbtn:hover{background:var(--mb-rose-lt);border-color:var(--accent);color:var(--accent)}
   .mbtn:active{transform:translateY(1px)}
   .spacer{flex:1}
+  .helpwrap{position:relative;display:inline-block}
+  .helpmenu{display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--panel);border:1px solid var(--line);
+    border-radius:var(--r-md);box-shadow:var(--sh-md);min-width:200px;z-index:40;overflow:hidden}
+  .helpmenu.open{display:block}
+  .helpmenu a{display:block;padding:9px 14px;color:var(--ink);text-decoration:none;font-size:13px;transition:.1s ease}
+  .helpmenu a:hover{background:var(--mb-rose-lt);color:var(--accent)}
+  .helpmenu a+a{border-top:1px solid var(--line)}
+  .genGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+  .genGrid button{font:inherit;font-size:13px;padding:12px 10px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:var(--r-md);cursor:pointer;transition:.13s ease;text-align:left}
+  .genGrid button:hover{background:var(--mb-rose-lt);border-color:var(--accent);color:var(--accent)}
+  .genGrid button .gen-sub{display:block;font-size:10px;color:var(--muted);margin-top:3px;font-family:var(--font-ui);letter-spacing:.04em}
+  .genGrid button:hover .gen-sub{color:var(--accent)}
   .transport{display:flex;gap:8px;align-items:center;padding:6px 10px;background:var(--panel2);
     border-bottom:1px solid var(--line);flex-wrap:wrap}
   .transport label{color:var(--muted)}
@@ -126,10 +139,18 @@
       <button class="mbtn" id="mLoadBank">Load Wavetable</button>
       <button class="mbtn" id="mSaveBank">Save Wavetable</button>
       <button class="mbtn" id="mConvert">Convert → WavPak</button>
+      <button class="mbtn" id="mGenerate">⚡ Generate</button>
       <span style="width:8px"></span>
       <button class="mbtn" id="mLoadWave">Load Wave</button>
       <button class="mbtn" id="mSaveWave">Save Wave</button>
       <span class="spacer"></span>
+      <span class="helpwrap" id="helpWrap">
+        <button class="mbtn" id="mHelp">Manual ▾</button>
+        <div class="helpmenu" id="helpMenu">
+          <a href="https://cdn.shopify.com/s/files/1/0597/8665/7952/files/OsirisEdit_User_Manual_v1.pdf?v=1637768859" target="_blank" rel="noopener">Download Manual (PDF)</a>
+          <a href="docs/addendum.html" target="_blank" rel="noopener">Web Edition Addendum</a>
+        </div>
+      </span>
       <button class="mbtn" id="mTheme" title="Toggle light / dark">◐ Theme</button>
       <button class="mbtn" id="mShuffle">Shuffle</button>
       <button class="mbtn" id="mDupAll">Duplicate → All</button>
@@ -273,6 +294,25 @@
   </div>
 
   <div class="status" id="status">Ready. DSP verified against original ✓ — draw a waveform or load a wavetable.</div>
+</div>
+
+<div id="generateModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;align-items:center;justify-content:center">
+  <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;width:min(560px,92vw);max-height:90vh;overflow:auto;box-shadow:var(--sh-md)">
+    <h3 style="margin:0 0 4px;font-family:var(--font-ui);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-size:12px">Generate Wavetable</h3>
+    <p class="small" style="color:var(--muted);margin:0 0 14px">Fill all 32 waveforms with generated content. Pick a generator; the coherence slider sets how smoothly the waves evolve across the morph.</p>
+    <div class="genGrid" id="genButtons"></div>
+    <div style="display:grid;grid-template-columns:110px 1fr 46px;gap:8px;align-items:center;margin:16px 0 6px">
+      <label class="small" style="color:var(--muted)">Coherence</label>
+      <input type="range" id="genCoh" min="0" max="1" step="0.01" value="0.7">
+      <span class="val small" id="genCohV">0.70</span>
+    </div>
+    <p class="small" style="color:var(--muted);margin:0 0 12px">0 = each wave independent (chaotic morph) · 1 = smooth glide across the table</p>
+    <div class="seg">
+      <button id="genReroll" style="display:none">↻ Re-roll same generator</button>
+      <button id="genClose">Close</button>
+    </div>
+    <p class="small" id="genStatus" style="color:var(--muted);margin:10px 0 0"></p>
+  </div>
 </div>
 
 <div id="convertModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;align-items:center;justify-content:center">

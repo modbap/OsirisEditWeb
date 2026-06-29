@@ -16,7 +16,7 @@ OsirisEdit is a fork of WaveEdit. The two share the entire DSP engine **unchange
 OsirisEdit added the features that make it Osiris-specific. **This port must match OsirisEdit's
 behavior, not WaveEdit's.** The authoritative diff and parity checklist is in
 `docs/OSIRISEDIT_VS_WAVEEDIT.md`. Terminology and data model are in `docs/OSIRIS_MODEL.md`.
-The official manual is `docs/OsirisEdit_User_Manual_v1.pdf`. Consult these before UI work.
+The official manual is the hosted manual (https://cdn.shopify.com/s/files/1/0597/8665/7952/files/OsirisEdit_User_Manual_v1.pdf). Consult these before UI work.
 
 Vocabulary (Osiris terms — use these in all user-facing text):
 - **Waveform** = 256 samples (one wav). Code: `Wave`, `WAVE_LEN = 256`.
