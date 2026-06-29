@@ -36,21 +36,36 @@ Exact OsirisEdit File menu:
 Edit menu adds: Select All, **Copy All** (Cmd+C), **Paste All** (Cmd+V), Clear (Del),
 Randomize Effects (R), Copy / Cut / Paste, Open Wave…, Save Wave As…
 
-### 2. Convert → WavPak export  ⛔ NOT YET BUILT (core feature)
+### 2. Convert → WavPak export  ✅ BUILT (Stage 1 + Stage 2)
 `menuConvert()` popup. This is the whole reason the tool exists — getting wavetables onto
-the Osiris module. Faithful behavior from `ui.cpp`:
+the Osiris module. **Accurate behavior, verified against `Bank::saveWAV(info, bank_len, wave_len)`
+and `Bank::loadWAV` in the C++ source:**
 
-- Inputs: **Sample Rate** (combo), **Bit Depth** {8,16,32}, **Bank Length** {16,32,64},
-  **Wave Length** (256), source folder, destination folder, "**Separate Into WavPak Banks A-D**" checkbox.
-- Operation: read every `.wav` wavetable from the source folder, sorted alphabetically.
-  Re-encode each at the chosen rate/depth and write `wave_len` samples per waveform.
-- If "Separate A-D" checked: distribute files into `Osiris/A`, `/B`, `/C`, `/D` —
-  `letterIndex = fileIndex / 32`, capped at `32*4 = 128` files. Filenames `Osiris_<name>.wav`.
-- If unchecked: write all into a single `Osiris/` folder.
-- The C++ does **not** resample sample data on convert — it re-containers at the declared
-  sample rate and re-quantizes to the chosen bit depth. (Web note: in-browser there are no
-  folders; implement as: select multiple saved wavetable WAVs → produce a downloadable ZIP
-  with the A/B/C/D structure, re-encoded. The byte semantics must match the above.)
+- **It is a folder→folder batch processor**, not an exporter of the in-app wavetable.
+  It reads every `.wav` in a *source folder* (sorted alphabetically), re-encodes each, and
+  writes to a *destination folder*. The web port accepts **either** uploaded saved `.wav`
+  files **or** the current in-app wavetable (a useful web extension).
+- **Input is always 32 × 256.** `loadWAV` hard-codes reading `BANK_LEN(32) × WAVE_LEN(256)`
+  floats per file, then `commitSamples()` on each. The output dropdowns do not change input.
+- **Output honors the dropdowns** via `Bank::saveWAV(filename, info, bank_len, wave_len)`:
+  writes `bank_len` waves, each `wave_len` samples, at the chosen sample rate + bit depth.
+  - `wave_len ≤ 256` → clean truncation (shorter waves).
+  - `wave_len > 256` (dropdown goes to 2048) → the C++ reads **past** each 256-float
+    `postSamples` buffer into adjacent memory (out-of-bounds). This is a real bug, but it is
+    what the module-tested WavPaks contain. **Faithful mode reproduces it** by reading
+    contiguously into the next wave's data; **Corrected mode** zero-pads beyond 256.
+  - `bank_len > 32` → similar OOB past the 32-wave array. Faithful spills; Corrected clamps
+    to the last available wave.
+- **Sample rate** = header field (no sample-data resampling). **Bit depth** {8,16,32} = real
+  re-quantization. 8-bit is unsigned (silence → 128); 16/32-bit signed LE.
+- **"Separate Into WavPak Banks A-D"**: distribute files across `Osiris/A|B|C|D` at 32 files
+  per letter (`fileIndex / 32`), capped at 32×4 = 128. Filenames `Osiris_<name>.wav`.
+  Unchecked → all into a single `Osiris/` folder.
+- **Web implementation**: produces a downloadable `.zip` whose internal paths are
+  `Osiris/A/Osiris_<name>.wav` etc., matching the desktop output layout.
+- **Faithful (default)** matches the original exactly, OOB quirks included, so existing banks
+  reproduce bit-for-bit. **Corrected (toggle)** does the musically-sane thing for
+  wave_len > 256 / bank_len > 32. Tested in `test/check-wavpak.mjs`.
 
 ### 3. Selectable wavetable length 16/32/64  ⛔ NOT YET BUILT (hard-coded 32)
 `bankLens[] = {"16","32","64"}`, `BANK_LEN = atoi(...)`. The length dropdown (top-left of the
@@ -79,8 +94,8 @@ Manual p24: modes are Replace All / Replace Partial / Mix / Ring Modulate, plus 
 Trim and Snap Trim. The port has Replace All / Mix / Ring and dropped Replace Partial + Trim.
 
 ## Priority order for matching OsirisEdit
-1. Convert → WavPak (#2) — the defining Osiris feature.
-2. Selectable length 16/32/64 (#3).
+1. ~~Convert → WavPak (#2)~~ ✅ DONE (Stage 1 + Stage 2, faithful + corrected).
+2. Selectable length 16/32/64 in the editor (#3).
 3. Effect Editor all-waveforms model (#5).
 4. Catalog presets (#6).
 5. Copy/Paste All (#4) and Import Replace Partial + Trim (#7).

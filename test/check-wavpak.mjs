@@ -63,5 +63,52 @@ ok(SAMPLE_RATES.includes('44100') && SAMPLE_RATES.includes('96000'), 'sample-rat
 ok(BIT_DEPTHS.join(',')==='8,16,32', 'bit-depth options');
 ok(WAVETABLE_LENGTHS.join(',')==='16,32,64', 'wavetable-length options');
 
+// (summary printed at end, after Stage 2 tests)
+
+// ===== Stage 2: faithful vs corrected, WAV parse round-trip =====
+import { parseWavetableWav } from '../src/wavpak.js';
+console.log('\n-- Stage 2: faithful/corrected + parse --');
+
+// WAV parse round-trip: encode a known 32x256, parse it back
+{
+  const wfs = Array.from({length:32}, (_,w)=>{ const a=new Float32Array(256); for(let i=0;i<256;i++)a[i]=Math.sin((w+1)*i*0.05); return a; });
+  const flat = new Float32Array(32*256); wfs.forEach((wf,w)=>flat.set(wf,w*256));
+  const wav = encodeWavPCM(flat, 44100, 16);
+  const parsed = parseWavetableWav(wav.buffer);
+  ok(parsed.waveforms.length===32, `parse: 32 waveforms back (${parsed.waveforms.length})`);
+  ok(parsed.waveforms[0].length===256, `parse: 256 samples per waveform`);
+  let maxerr=0; for(let w=0;w<32;w++)for(let i=0;i<256;i++)maxerr=Math.max(maxerr,Math.abs(parsed.waveforms[w][i]-wfs[w][i]));
+  ok(maxerr<2e-4, `parse round-trip err ${maxerr.toExponential(2)} (16-bit quant)`);
+}
+
+// wave_len <= 256: faithful and corrected agree (clean truncation)
+{
+  const wfs = Array.from({length:32}, ()=>{ const a=new Float32Array(256); for(let i=0;i<256;i++)a[i]=i/256; return a; });
+  const f = wavetableToSamples(wfs, 32, 128, false);
+  const c = wavetableToSamples(wfs, 32, 128, true);
+  let same=true; for(let i=0;i<f.length;i++) if(Math.abs(f[i]-c[i])>1e-9) same=false;
+  ok(same, 'wave_len=128: faithful == corrected (truncation only)');
+  ok(f.length===32*128, `wave_len=128 length ${f.length}`);
+}
+
+// wave_len > 256: faithful reads past (cross into next wave), corrected zero-pads
+{
+  const wfs = Array.from({length:32}, (_,w)=>{ const a=new Float32Array(256); a.fill(w); return a; }); // wave w is all value w
+  const f = wavetableToSamples(wfs, 32, 512, false);
+  const c = wavetableToSamples(wfs, 32, 512, true);
+  // faithful: wave 0 samples 256..511 spill into wave 1's data (value 1)
+  ok(Math.abs(f[300]-1)<1e-6, `faithful wave_len>256 reads into next wave (got ${f[300]}, expect 1)`);
+  // corrected: wave 0 samples 256..511 are zero-padded
+  ok(Math.abs(c[300]-0)<1e-6, `corrected wave_len>256 zero-pads (got ${c[300]}, expect 0)`);
+  ok(Math.abs(c[100]-0)<1e-6 && Math.abs(c[10]-0)<1e-6, 'corrected keeps first 256 of wave 0 (value 0)');
+}
+
+// bank_len > available (64 from 32): faithful spills, corrected clamps to last wave
+{
+  const wfs = Array.from({length:32}, (_,w)=>{ const a=new Float32Array(256); a.fill(w); return a; });
+  const c = wavetableToSamples(wfs, 64, 256, true);
+  ok(Math.abs(c[63*256+0]-31)<1e-6, `corrected bank_len=64 clamps wave 63 to last available (31), got ${c[63*256]}`);
+}
+
 console.log(fails===0 ? '\nWAVPAK / CONVERT TEST PASS ✓' : `\n${fails} FAILURE(S) ✗`);
 process.exit(fails===0?0:1);

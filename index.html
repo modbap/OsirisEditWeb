@@ -231,13 +231,15 @@
       <label>Wave Length</label><select id="cvWaveLen"></select>
     </div>
     <label class="small" style="display:flex;gap:8px;align-items:center;margin:12px 0"><input type="checkbox" id="cvSeparate" checked> Separate into WavPak banks A–D</label>
+    <label class="small" style="display:flex;gap:8px;align-items:center;margin:0 0 12px"><input type="checkbox" id="cvCorrected"> Corrected mode (zero-pad / clamp instead of faithful out-of-bounds for Wave Length &gt; 256 or Bank Length &gt; 32)</label>
     <div class="card" style="margin:0 0 12px">
-      <h3>Queue — wavetables to convert</h3>
-      <div id="cvQueue" class="small" style="max-height:140px;overflow:auto"></div>
-      <div class="seg" style="margin-top:8px">
+      <h3>Source</h3>
+      <div class="seg" style="margin-bottom:6px">
         <button id="cvAddCurrent">+ Add current wavetable</button>
+        <button id="cvAddFiles">+ Add saved .wav files…</button>
         <button id="cvClearQueue">Clear queue</button>
       </div>
+      <div id="cvQueue" class="small" style="max-height:140px;overflow:auto"></div>
     </div>
     <div class="seg">
       <button id="cvDoConvert" style="background:var(--green);color:#fff;border-color:var(--green)">Convert &amp; download .zip</button>
@@ -247,4 +249,5 @@
 </div>
 
 <input type="file" id="fileInput" accept=".wav,audio/*" style="display:none">
+<input type="file" id="cvFileInput" accept=".wav" multiple style="display:none">
 <script type="module" src="./src/app.js"></script>

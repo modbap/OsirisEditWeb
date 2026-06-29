@@ -1,5 +1,5 @@
 import { Wave, WAVE_LEN, EFFECTS_LEN, EffectID, effectNames, RFFT, IRFFT } from './wave.js';
-import { convertToWavPak, SAMPLE_RATES, BIT_DEPTHS, BANK_SIZES, WAVE_LENGTHS, WAVETABLE_LENGTHS } from './wavpak.js';
+import { convertToWavPak, parseWavetableWav, SAMPLE_RATES, BIT_DEPTHS, BANK_SIZES, WAVE_LENGTHS, WAVETABLE_LENGTHS } from './wavpak.js';
 
 const BANK_LEN = 32, GW = 8, GH = 8;
 const clampf = (x,a,b)=> x>b?b:x<a?a:x;
@@ -307,24 +307,31 @@ function bind(){
   const cvFill=(sel,opts,def)=>{const e=$(sel);e.innerHTML='';opts.forEach(o=>{const op=document.createElement('option');op.value=o;op.textContent=o;if(o===def)op.selected=true;e.append(op);});};
   cvFill('#cvRate',SAMPLE_RATES,'44100'); cvFill('#cvDepth',BIT_DEPTHS,'16');
   cvFill('#cvBankLen',WAVETABLE_LENGTHS,'32'); cvFill('#cvWaveLen',WAVE_LENGTHS,'256');
-  const cvQueue=[];
-  function snapshotWavetable(name){ return {name, waveforms: bank.map(w=>Float32Array.from(w.postSamples))}; }
+  const cvQueue=[];  // each: {name, waveforms:Float32Array(256)[], source:'current'|'file'}
+  function snapshotWavetable(name){ return {name, waveforms: bank.map(w=>Float32Array.from(w.postSamples)), source:'current'}; }
   function renderQueue(){ const q=$('#cvQueue');
-    if(!cvQueue.length){q.innerHTML='<span style="color:var(--muted)">Empty — the current wavetable is converted by default.</span>';return;}
-    q.innerHTML=cvQueue.map((w,i)=>`${i<32?'A':i<64?'B':i<96?'C':'D'} · ${w.name}`).join('<br>'); }
+    if(!cvQueue.length){q.innerHTML='<span style="color:var(--muted)">Empty — add the current wavetable or saved .wav files.</span>';return;}
+    q.innerHTML=cvQueue.map((w,i)=>`${$('#cvSeparate').checked?(i<32?'A':i<64?'B':i<96?'C':'D')+' · ':''}${w.name} <span style="color:var(--muted)">(${w.source})</span>`).join('<br>'); }
   $('#mConvert').onclick=()=>{ renderQueue(); $('#convertModal').style.display='flex'; };
   $('#cvCancel').onclick=()=>{ $('#convertModal').style.display='none'; };
+  $('#cvSeparate').onchange=renderQueue;
   $('#cvAddCurrent').onclick=()=>{ cvQueue.push(snapshotWavetable(`wavetable_${cvQueue.length}`)); renderQueue(); };
+  $('#cvAddFiles').onclick=()=>$('#cvFileInput').click();
+  $('#cvFileInput').onchange=async e=>{ const files=[...e.target.files]; let added=0, failed=0;
+    for(const f of files){ try{ const ab=await f.arrayBuffer(); const {waveforms}=parseWavetableWav(ab);
+        cvQueue.push({name:f.name.replace(/\.wav$/i,''), waveforms, source:'file'}); added++; }
+      catch(err){ failed++; } }
+    renderQueue(); status(`Added ${added} file(s) to convert queue${failed?`, ${failed} skipped (not 32×256 WAV)`:''}.`); e.target.value=''; };
   $('#cvClearQueue').onclick=()=>{ cvQueue.length=0; renderQueue(); };
   $('#cvDoConvert').onclick=()=>{
     const list = cvQueue.length ? cvQueue : [snapshotWavetable('wavetable_0')];
     const zip = convertToWavPak(list, {
       sampleRate:$('#cvRate').value, bitDepth:$('#cvDepth').value,
       bankLen:$('#cvBankLen').value, waveLen:$('#cvWaveLen').value,
-      separateAD:$('#cvSeparate').checked });
+      separateAD:$('#cvSeparate').checked, corrected:$('#cvCorrected').checked });
     download(new Blob([zip],{type:'application/zip'}), 'Osiris_WavPak.zip');
     $('#convertModal').style.display='none';
-    status(`Converted ${list.length} wavetable(s) → Osiris_WavPak.zip`);
+    status(`Converted ${list.length} wavetable(s) → Osiris_WavPak.zip (${$('#cvCorrected').checked?'corrected':'faithful'} mode)`);
   };
 
   attachEditor($('#waveCanvas'),()=>bank[selectedId],refreshPost);
