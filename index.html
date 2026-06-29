@@ -73,6 +73,18 @@
   .helpmenu a{display:block;padding:9px 14px;color:var(--ink);text-decoration:none;font-size:13px;transition:.1s ease}
   .helpmenu a:hover{background:var(--mb-rose-lt);color:var(--accent)}
   .helpmenu a+a{border-top:1px solid var(--line)}
+  .libcount{display:inline-block;min-width:16px;text-align:center;background:var(--accent);color:#fff;border-radius:9px;
+    font-size:10px;font-family:var(--font-ui);padding:1px 5px;margin-left:5px;vertical-align:1px}
+  .liblist{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:var(--r-md);background:var(--bg)}
+  .librow{display:flex;align-items:center;gap:10px;padding:7px 12px;border-bottom:1px solid var(--line);font-size:13px}
+  .librow:last-child{border-bottom:none}
+  .librow .lbletter{font-family:var(--font-ui);font-weight:700;font-size:11px;width:18px;color:var(--accent2)}
+  .librow .lbname{flex:1}
+  .librow .lbsrc{font-size:10px;color:var(--muted);font-family:var(--font-ui);letter-spacing:.04em;text-transform:uppercase}
+  .librow .lbdel{cursor:pointer;color:var(--muted);border:none;background:none;font-size:15px;padding:2px 6px;border-radius:4px}
+  .librow .lbdel:hover{background:var(--mb-rose-lt);color:var(--accent)}
+  .libempty{padding:24px;text-align:center;color:var(--muted);font-size:13px}
+  .libbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);flex-wrap:wrap}
   .genGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
   .genGrid button{font:inherit;font-size:13px;padding:12px 10px;background:var(--panel2);border:1px solid var(--line);
     border-radius:var(--r-md);cursor:pointer;transition:.13s ease;text-align:left}
@@ -180,6 +192,7 @@
     <div class="tab" data-page="grid">Grid XY View</div>
     <div class="tab" data-page="waterfall">Waterfall View</div>
     <div class="tab" data-page="import">Import Audio</div>
+    <div class="tab" data-page="library">Library <span class="libcount" id="libCount">0</span></div>
   </div>
 
   <div class="body">
@@ -288,6 +301,28 @@
         <div class="seg" style="margin-top:8px">
           <button id="impApply" style="background:var(--green);color:#fff;border-color:var(--green)">Import into wavetable</button>
           <button id="impCancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIBRARY -->
+    <div class="page" id="page-library">
+      <div class="card">
+        <h3>Wavetable Library — build a WavPak set</h3>
+        <p class="small" style="color:var(--muted);margin:0 0 10px">
+          Collect wavetables here, then package them all at once into the Osiris A/B/C/D WavPak structure
+          (32 wavetables per bank letter, up to 128 total). Each wavetable is the current 32-waveform set.</p>
+        <div class="seg" style="margin-bottom:10px;flex-wrap:wrap">
+          <button id="libAdd" style="background:var(--accent);color:#fff;border-color:var(--accent)">+ Add current wavetable</button>
+          <label class="small" style="display:flex;align-items:center;gap:6px;margin-left:4px"><input type="checkbox" id="libAuto"> Auto-collect on Generate / Save</label>
+          <span class="spacer"></span>
+          <button id="libImport">+ Add saved .wav files…</button>
+          <button id="libClear">Clear all</button>
+        </div>
+        <div id="libList" class="liblist"></div>
+        <div class="libbar">
+          <div class="small" style="color:var(--muted)"><b id="libN">0</b> / 128 wavetables · fills bank <span id="libBanks">—</span></div>
+          <button id="libPackage" style="background:var(--green);color:#fff;border-color:var(--green)">Package → WavPak (.zip)</button>
         </div>
       </div>
     </div>

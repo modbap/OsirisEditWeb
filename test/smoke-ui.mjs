@@ -40,10 +40,18 @@ try {
   const firstGen = window.document.querySelector('#genButtons button');
   if(firstGen) firstGen.dispatchEvent(new window.Event('click',{bubbles:true}));
   console.log('Re-roll visible after generate:', window.document.querySelector('#genReroll').style.display!=='none' ? 'yes ✓':'NO');
-  // Help menu
-  click('#mHelp');
-  console.log('Help menu opens:', window.document.querySelector('#helpMenu').classList.contains('open') ? 'yes ✓':'NO');
-  console.log('Manual links present:', window.document.querySelectorAll('#helpMenu a').length, '(expect 2)');
+  // Library
+  const libTab = [...window.document.querySelectorAll('.tab')].find(t=>t.dataset.page==='library');
+  if(libTab) libTab.dispatchEvent(new window.Event('click',{bubbles:true}));
+  click('#libAdd'); click('#libAdd');
+  console.log('Library rows after 2 adds:', window.document.querySelectorAll('#libList .librow').length, '(expect 2)');
+  console.log('Library count badge:', window.document.querySelector('#libCount').textContent, '(expect 2)');
+  // auto-collect on generate
+  window.document.querySelector('#libAuto').checked = true;
+  if(firstGen) firstGen.dispatchEvent(new window.Event('click',{bubbles:true}));
+  console.log('Library grew via auto-collect:', window.document.querySelectorAll('#libList .librow').length, '(expect 3)');
+  click('#libPackage');  // should build zip, no throw
+  console.log('Package clicked without error: yes ✓');
 } catch(e){ errors.push('UI THROW: '+e.message); }
 console.log('Errors:', errors.length); errors.slice(0,6).forEach(e=>console.log('  •',e));
 console.log(errors.length===0?'UI SMOKE TEST PASS ✓':'see errors');

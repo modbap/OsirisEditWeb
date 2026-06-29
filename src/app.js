@@ -42,8 +42,13 @@ async function decodeAudio(file){
 }
 function download(blob,name){ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
 
-function saveBankWAV(){ const all=new Float32Array(BANK_LEN*WAVE_LEN); for(let j=0;j<BANK_LEN;j++) all.set(bank[j].postSamples,j*WAVE_LEN); download(encodeWAV(all),'osiris_bank.wav'); status('Saved bank (32×256 @ 44.1k, 16-bit).'); }
-function saveWaveWAV(){ download(encodeWAV(bank[selectedId].postSamples),`osiris_wave_${selectedId}.wav`); }
+let wtCounter=1;
+function pad2(n){ return String(n).padStart(2,'0'); }
+function saveBankWAV(){ const all=new Float32Array(BANK_LEN*WAVE_LEN); for(let j=0;j<BANK_LEN;j++) all.set(bank[j].postSamples,j*WAVE_LEN);
+  const name=`Osiris_WT_${pad2(wtCounter)}.wav`; download(encodeWAV(all),name); wtCounter++;
+  if(window.__libAuto && window.__libAuto()) window.__libAdd(name.replace(/\.wav$/,''),'saved');
+  status(`Saved wavetable → ${name} (32 waveforms · 32×256 @ 44.1k/16-bit).`); }
+function saveWaveWAV(){ download(encodeWAV(bank[selectedId].postSamples),`Osiris_waveform_${pad2(selectedId)}.wav`); status(`Saved waveform ${selectedId}.`); }
 
 function loadBankFromSamples(flat){ // flat length BANK_LEN*WAVE_LEN
   for(let j=0;j<BANK_LEN;j++){ bank[j].clear(); bank[j].samples.set(flat.subarray(j*WAVE_LEN,(j+1)*WAVE_LEN)); bank[j].commitSamples(); }
@@ -316,7 +321,37 @@ function bind(){
 
   $('#wfAngle').oninput=drawWaterfall; $('#wfAmp').oninput=drawWaterfall;
 
-  // --- Generate wavetable ---
+  // --- Wavetable Library (collect up to 128 → package A/B/C/D) ---
+  const LIB_MAX=128;
+  const library=[]; // {name, waveforms:Float32Array(256)[], source}
+  const libLetter=i=> i<32?'A':i<64?'B':i<96?'C':'D';
+  function renderLibrary(){
+    $('#libCount').textContent=library.length;
+    $('#libN').textContent=library.length;
+    const banks=library.length? [...new Set(library.map((_,i)=>libLetter(i)))].join('/') : '—';
+    $('#libBanks').textContent=banks;
+    const el=$('#libList');
+    if(!library.length){ el.innerHTML='<div class="libempty">Empty — add the current wavetable, or turn on auto-collect and generate a few.</div>'; return; }
+    el.innerHTML=library.map((w,i)=>`<div class="librow"><span class="lbletter">${libLetter(i)}</span><span class="lbname">${w.name}</span><span class="lbsrc">${w.source}</span><button class="lbdel" data-i="${i}" title="Remove">✕</button></div>`).join('');
+    el.querySelectorAll('.lbdel').forEach(b=>b.onclick=()=>{ library.splice(+b.dataset.i,1); renderLibrary(); });
+  }
+  function libSnapshot(name,source){ return {name:name||`Osiris_WT_${pad2(library.length+1)}`, waveforms:bank.map(w=>Float32Array.from(w.postSamples)), source:source||'current'}; }
+  function addToLibrary(name,source){
+    if(library.length>=LIB_MAX){ status(`Library full (${LIB_MAX} max). Package or remove some.`); return false; }
+    library.push(libSnapshot(name,source)); renderLibrary(); return true; }
+  $('#libAdd').onclick=()=>{ if(addToLibrary()) status(`Added wavetable ${library.length} to library.`); };
+  $('#libClear').onclick=()=>{ library.length=0; renderLibrary(); };
+  $('#libImport').onclick=()=>{ fileTarget='library'; $('#cvFileInput').click(); };
+  $('#libPackage').onclick=()=>{
+    if(!library.length){ status('Library is empty — add wavetables first.'); return; }
+    const zip=convertToWavPak(library, {
+      sampleRate:'44100', bitDepth:'16', bankLen:'32', waveLen:'256', separateAD:true, corrected:false });
+    download(new Blob([zip],{type:'application/zip'}),'Osiris_WavPak.zip');
+    status(`Packaged ${library.length} wavetable(s) → Osiris_WavPak.zip (A/B/C/D, 16-bit/44.1k).`); };
+  renderLibrary();
+  // expose auto-collect hooks
+  window.__libAuto=()=>$('#libAuto').checked;
+  window.__libAdd=(name,source)=>addToLibrary(name,source);
   const genSubs={harmonic:'smooth · musical',additive:'evolving texture',catalog:'classic shapes',glitch:'chaotic · bright',fm:'metallic · swept'};
   const gb=$('#genButtons');
   Object.entries(GENERATORS).forEach(([kind,g])=>{ const b=document.createElement('button');
@@ -328,6 +363,7 @@ function bind(){
     for(let j=0;j<BANK_LEN;j++){ bank[j].clear(); bank[j].samples.set(waves[j]); bank[j].commitSamples(); }
     lastGenKind=kind; $('#genReroll').style.display='';
     refreshAll();
+    if(window.__libAuto && window.__libAuto()) window.__libAdd(`Osiris_WT_${pad2(library.length+1)}`,'generated');
     $('#genStatus').textContent=`Generated 32 waveforms — ${GENERATORS[kind].label}, coherence ${coh.toFixed(2)}. Re-roll for a new random set.`;
     status(`Generated wavetable: ${GENERATORS[kind].label} (coherence ${coh.toFixed(2)})`); }
   $('#mGenerate').onclick=()=>{ $('#generateModal').style.display='flex'; };
@@ -351,12 +387,17 @@ function bind(){
   $('#cvCancel').onclick=()=>{ $('#convertModal').style.display='none'; };
   $('#cvSeparate').onchange=renderQueue;
   $('#cvAddCurrent').onclick=()=>{ cvQueue.push(snapshotWavetable(`wavetable_${cvQueue.length}`)); renderQueue(); };
-  $('#cvAddFiles').onclick=()=>$('#cvFileInput').click();
+  let fileTarget='convert'; // 'convert' | 'library'
+  $('#cvAddFiles').onclick=()=>{ fileTarget='convert'; $('#cvFileInput').click(); };
   $('#cvFileInput').onchange=async e=>{ const files=[...e.target.files]; let added=0, failed=0;
     for(const f of files){ try{ const ab=await f.arrayBuffer(); const {waveforms}=parseWavetableWav(ab);
-        cvQueue.push({name:f.name.replace(/\.wav$/i,''), waveforms, source:'file'}); added++; }
+        const item={name:f.name.replace(/\.wav$/i,''), waveforms, source:'file'};
+        if(fileTarget==='library'){ if(library.length<LIB_MAX){library.push(item);added++;} }
+        else { cvQueue.push(item); added++; } }
       catch(err){ failed++; } }
-    renderQueue(); status(`Added ${added} file(s) to convert queue${failed?`, ${failed} skipped (not 32×256 WAV)`:''}.`); e.target.value=''; };
+    if(fileTarget==='library'){ renderLibrary(); status(`Added ${added} file(s) to library${failed?`, ${failed} skipped (not 32×256 WAV)`:''}.`); }
+    else { renderQueue(); status(`Added ${added} file(s) to convert queue${failed?`, ${failed} skipped (not 32×256 WAV)`:''}.`); }
+    fileTarget='convert'; e.target.value=''; };
   $('#cvClearQueue').onclick=()=>{ cvQueue.length=0; renderQueue(); };
   $('#cvDoConvert').onclick=()=>{
     const list = cvQueue.length ? cvQueue : [snapshotWavetable('wavetable_0')];
