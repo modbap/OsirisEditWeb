@@ -4,7 +4,7 @@
 
 A browser-based wavetable editor for the **Modbap Osiris** synthesizer. Draw and morph 256-sample waves, shape them with the full effect chain, and export banks as 44.1 kHz / 16-bit WAV — on any modern browser (macOS, Windows, Linux, iPad). No install, no native binary, no Rosetta.
 
-This is a from-scratch web port of the native desktop editor, built because the original x86 binary stopped running once Apple discontinued Rosetta 2 support on Apple Silicon. The web version solves that permanently.
+The native OsirisEdit (built for Intel architecture) relies on Apple's Rosetta 2 translation to run on Apple Silicon Macs. As Apple phases Rosetta 2 out, the desktop binary will eventually stop running on new machines. This web edition was built in anticipation of that shift — so whether you're on any Mac (or Windows, Linux, or iPad), the tool keeps working. It isn't a replacement for the desktop app; it's a forward-compatible version of the same application, keeping the DSP faithful while adapting the platform for permanence.
 
 ## Lineage & credit
 

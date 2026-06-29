@@ -6,9 +6,10 @@ Read this first, every session. It pins the project's rules so work doesn't drif
 
 A browser/Web Audio port of **OsirisEdit** — the wavetable editor for the Modbap Osiris
 eurorack module. Lineage: Andrew Belt's **WaveEdit** -> **switchupcb/OsirisEdit** ->
-**modbap/OsirisEdit** (C++) -> this independent JS repo. The native x86 binary stopped
-running when Apple dropped Rosetta 2; this web version replaces it permanently. New codebase,
-not a GitHub fork.
+**modbap/OsirisEdit** (C++) -> this independent JS repo. The native x86 binary runs on Apple
+Silicon through Rosetta 2; as Apple phases Rosetta 2 out it will eventually stop running on newer
+Macs. This web edition was built in anticipation of that — a forward-compatible companion to the
+desktop app, not a replacement for it. New codebase, not a GitHub fork.
 
 ## Build OsirisEdit, not WaveEdit
 
