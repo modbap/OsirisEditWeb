@@ -50,10 +50,17 @@
   html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
     font-family:var(--mono);font-size:13px;-webkit-font-smoothing:antialiased}
   #app{display:flex;flex-direction:column;height:100%}
-  .menubar{display:flex;gap:6px;align-items:center;padding:7px 12px;background:var(--panel);box-shadow:var(--sh-sm);
-    border-bottom:1px solid var(--line);user-select:none;flex-wrap:wrap}
-  .brand{font-family:var(--font-logo);font-weight:800;font-size:18px;letter-spacing:.01em;margin-right:14px;text-transform:lowercase;color:var(--ink)}
-  .brand b{color:var(--accent);font-weight:800}
+  .appbar{user-select:none;border-bottom:1px solid var(--line);box-shadow:var(--sh-sm)}
+  .idband{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 18px 12px;background:var(--panel)}
+  .wordmark{font-family:var(--font-logo);font-weight:800;font-size:32px;line-height:.9;letter-spacing:-.01em;color:var(--ink);text-transform:uppercase}
+  .wordmark b{font-weight:800}
+  .wordmark .wm-edit{color:var(--accent)}
+  .wordmark .wm-web{font-family:var(--font-ui);font-weight:500;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);vertical-align:6px;margin-left:9px}
+  .subtitle{font-family:var(--font-ui);font-weight:600;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .mmark{font-family:var(--font-logo);font-weight:800;font-size:30px;line-height:.8;color:var(--ink)}
+  .mmark .mdot{color:var(--accent2)}
+  .menubar{display:flex;gap:6px;align-items:center;padding:9px 18px;background:var(--bg);
+    border-top:1px solid var(--line);user-select:none;flex-wrap:wrap}
   .mbtn{padding:5px 11px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);
     cursor:pointer;font:inherit;color:inherit;transition:.13s ease}
   .mbtn:hover{background:var(--mb-rose-lt);border-color:var(--accent);color:var(--accent)}
@@ -106,20 +113,28 @@
 </style>
 
 <div id="app">
-  <div class="menubar">
-    <span class="brand"><b>OSIRIS</b>edit · web</span>
-    <button class="mbtn" id="mNewBank">New Wavetable</button>
-    <button class="mbtn" id="mLoadBank">Load Wavetable</button>
-    <button class="mbtn" id="mSaveBank">Save Wavetable</button>
-    <button class="mbtn" id="mConvert">Convert → WavPak</button>
-    <span style="width:8px"></span>
-    <button class="mbtn" id="mLoadWave">Load Wave</button>
-    <button class="mbtn" id="mSaveWave">Save Wave</button>
-    <span class="spacer"></span>
-    <button class="mbtn" id="mTheme" title="Toggle light / dark">◐ Theme</button>
-    <button class="mbtn" id="mShuffle">Shuffle</button>
-    <button class="mbtn" id="mDupAll">Duplicate → All</button>
-  </div>
+  <header class="appbar">
+    <div class="idband">
+      <div class="idblock">
+        <div class="wordmark"><b>OSIRIS</b><span class="wm-edit">edit</span><span class="wm-web">web</span></div>
+        <div class="subtitle">Wavetable Editor for Osiris</div>
+      </div>
+      <div class="mmark">m<span class="mdot">.</span></div>
+    </div>
+    <div class="menubar">
+      <button class="mbtn" id="mNewBank">New Wavetable</button>
+      <button class="mbtn" id="mLoadBank">Load Wavetable</button>
+      <button class="mbtn" id="mSaveBank">Save Wavetable</button>
+      <button class="mbtn" id="mConvert">Convert → WavPak</button>
+      <span style="width:8px"></span>
+      <button class="mbtn" id="mLoadWave">Load Wave</button>
+      <button class="mbtn" id="mSaveWave">Save Wave</button>
+      <span class="spacer"></span>
+      <button class="mbtn" id="mTheme" title="Toggle light / dark">◐ Theme</button>
+      <button class="mbtn" id="mShuffle">Shuffle</button>
+      <button class="mbtn" id="mDupAll">Duplicate → All</button>
+    </div>
+  </header>
 
   <div class="transport">
     <button class="play off" id="playBtn">▶ Play</button>
