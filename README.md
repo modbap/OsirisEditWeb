@@ -1,5 +1,7 @@
 # OsirisEdit Web
 
+**Live:** https://osirisedit.modbap.com · **Repo:** https://github.com/modbap/OsirisEditWeb
+
 A browser-based wavetable editor for the **Modbap Osiris** synthesizer. Draw and morph 256-sample waves, shape them with the full effect chain, and export banks as 44.1 kHz / 16-bit WAV — on any modern browser (macOS, Windows, Linux, iPad). No install, no native binary, no Rosetta.
 
 This is a from-scratch web port of the native desktop editor, built because the original x86 binary stopped running once Apple discontinued Rosetta 2 support on Apple Silicon. The web version solves that permanently.

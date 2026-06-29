@@ -65,11 +65,11 @@ function drawWave(cv, samples, opts={}){
   const ctx=fitCanvas(cv), W=cv.width, H=cv.height, dpr=devicePixelRatio||1;
   ctx.clearRect(0,0,W,H);
   // grid
-  ctx.strokeStyle='#cfcfcf'; ctx.lineWidth=1*dpr;
+  ctx.strokeStyle=cssVar('--grid','#cfcfcf'); ctx.lineWidth=1*dpr;
   for(let g=0;g<=8;g++){const x=g/8*W; ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  ctx.strokeStyle='#bdbdbd'; ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
-  if(opts.ghost){ ctx.strokeStyle='rgba(43,43,43,.25)'; ctx.lineWidth=1*dpr; plot(ctx,opts.ghost,W,H,opts.ghost.length); }
-  ctx.strokeStyle=opts.color||'#2b2b2b'; ctx.lineWidth=(opts.lw||1.6)*dpr; plot(ctx,samples,W,H,samples.length);
+  ctx.strokeStyle=cssVar('--grid2','#bdbdbd'); ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
+  if(opts.ghost){ ctx.strokeStyle=cssVar('--accent','#c0392b')+'';ctx.globalAlpha=.28; ctx.lineWidth=1*dpr; plot(ctx,opts.ghost,W,H,opts.ghost.length); ctx.globalAlpha=1; }
+  ctx.strokeStyle=opts.color||cssVar('--plot','#2b2b2b'); ctx.lineWidth=(opts.lw||1.6)*dpr; plot(ctx,samples,W,H,samples.length);
 }
 function plot(ctx,arr,W,H,n){ ctx.beginPath(); for(let i=0;i<n;i++){const x=i/(n-1)*W; const y=rescalef(arr[i],1,-1,0,H); i?ctx.lineTo(x,y):ctx.moveTo(x,y);} ctx.stroke(); }
 
@@ -77,9 +77,9 @@ function drawHarm(cv, harm){
   const ctx=fitCanvas(cv),W=cv.width,H=cv.height,dpr=devicePixelRatio||1; ctx.clearRect(0,0,W,H);
   const n=harm.length, show=Math.min(n,64), bw=W/show;
   let max=1e-6; for(let i=0;i<show;i++) max=Math.max(max,harm[i]);
-  ctx.strokeStyle='#cfcfcf';ctx.lineWidth=1*dpr;ctx.beginPath();ctx.moveTo(0,H-1);ctx.lineTo(W,H-1);ctx.stroke();
+  ctx.strokeStyle=cssVar('--grid','#cfcfcf');ctx.lineWidth=1*dpr;ctx.beginPath();ctx.moveTo(0,H-1);ctx.lineTo(W,H-1);ctx.stroke();
   for(let i=0;i<show;i++){ const h=harm[i]/max*(H-4); const x=i*bw;
-    ctx.fillStyle= i===0 ? '#888' : '#2d6cdf'; ctx.fillRect(x+1,H-h,bw-2,h); }
+    ctx.fillStyle= i===0 ? cssVar('--muted','#888') : cssVar('--accent2','#2d6cdf'); ctx.fillRect(x+1,H-h,bw-2,h); }
 }
 
 // ---------------- Editor tool behaviors (faithful to widgets.cpp) ----------------
@@ -165,6 +165,7 @@ function pushParams(){ if(node) node.port.postMessage({s:{...audio}}); }
 // ---------------- UI wiring ----------------
 let currentTool='pencil';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const cssVar=(n,f)=>{try{const v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||f;}catch{return f;}};
 function status(t){ $('#status').textContent=t; }
 
 function buildBankGrid(container){ container.innerHTML='';
@@ -175,8 +176,8 @@ function buildBankGrid(container){ container.innerHTML='';
 function paintBankGrid(container){ [...container.children].forEach((cell,i)=>{ cell.classList.toggle('sel',i===selectedId);
   const c=cell.querySelector('canvas'); drawMini(c,bank[i].postSamples); }); }
 function drawMini(cv,s){ const ctx=fitCanvas(cv),W=cv.width,H=cv.height; ctx.clearRect(0,0,W,H);
-  ctx.strokeStyle='#bbb';ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
-  ctx.strokeStyle='#2b2b2b';ctx.lineWidth=1;plot(ctx,s,W,H,s.length); }
+  ctx.strokeStyle=cssVar('--grid2','#bbb');ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
+  ctx.strokeStyle=cssVar('--plot','#2b2b2b');ctx.lineWidth=1;plot(ctx,s,W,H,s.length); }
 
 function selectWave(i){ selectedId=i; audio.morphX=i%GW; audio.morphY=Math.floor(i/GW); audio.morphZ=i;
   $('#morphZ').value=i; pushParams(); refreshAll(); }
@@ -197,7 +198,7 @@ function refreshFxValues(){ const w=bank[selectedId]; const rows=$('#fxGrid').ch
 
 function refreshPost(){ const w=bank[selectedId];
   drawWave($('#waveCanvas'),w.samples,{ghost:w.postSamples}); drawHarm($('#harmCanvas'),w.harmonics);
-  drawWave($('#fxSrc'),w.samples); drawWave($('#fxPost'),w.postSamples,{color:'#c0392b'});
+  drawWave($('#fxSrc'),w.samples); drawWave($('#fxPost'),w.postSamples,{color:cssVar('--accent','#c0392b')});
   paintBankGrid($('#bankGridEditor')); if($('#page-grid').classList.contains('active'))paintBankGrid($('#bankGridXY'));
   if($('#page-waterfall').classList.contains('active'))drawWaterfall();
   pushAudio(); }
@@ -214,8 +215,8 @@ function drawWaterfall(){ const cv=$('#waterfall'),ctx=fitCanvas(cv),W=cv.width,
     ctx.beginPath(); const s=bank[j].postSamples;
     for(let i=0;i<WAVE_LEN;i++){ const x= (i/(WAVE_LEN-1))*(W*0.8) + shiftX + W*0.02;
       const y= yOff - s[i]*ampPx; i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
-    const t=j/(BANK_LEN-1); ctx.strokeStyle=j===selectedId?'#c0392b':`rgba(40,40,40,${0.35+0.5*(1-t)})`;
-    ctx.lineWidth=(j===selectedId?2:1)*dpr; ctx.stroke(); }
+    const t=j/(BANK_LEN-1); ctx.strokeStyle=j===selectedId?cssVar('--accent','#c0392b'):cssVar('--plot','#2b2b2b');if(j!==selectedId)ctx.globalAlpha=0.35+0.5*(1-t);
+    ctx.lineWidth=(j===selectedId?2:1)*dpr; ctx.stroke(); ctx.globalAlpha=1; }
 }
 
 // XY pad
@@ -227,10 +228,10 @@ function attachXY(){ const cv=$('#xyPad'); let active=false;
   cv.addEventListener('pointerup',()=>active=false);
 }
 function drawXY(){ const cv=$('#xyPad'),ctx=fitCanvas(cv),W=cv.width,H=cv.height; ctx.clearRect(0,0,W,H);
-  ctx.strokeStyle='#cfcfcf';for(let i=0;i<=GW;i++){const x=i/GW*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  ctx.strokeStyle=cssVar('--grid','#cfcfcf');for(let i=0;i<=GW;i++){const x=i/GW*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let j=0;j<=GH;j++){const y=j/GH*H;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
   const px=audio.morphX/(GW-1)*W, py=audio.morphY/(GH-1)*H;
-  ctx.fillStyle='#c0392b';ctx.beginPath();ctx.arc(px,py,7,0,7);ctx.fill(); }
+  ctx.fillStyle=cssVar('--accent','#c0392b');ctx.beginPath();ctx.arc(px,py,7,0,7);ctx.fill(); }
 
 // ---------------- Import ----------------
 const imp={audio:null,len:0,gain:0,offset:0,zoom:1,mode:0};
@@ -254,7 +255,7 @@ function computeImport(){ const out=new Float32Array(BANK_LEN*WAVE_LEN); if(!imp
 function impRender(){ const prev=new Float32Array(BANK_LEN*WAVE_LEN);
   if(imp.audio)resampleLinear(imp.audio,imp.len,prev,BANK_LEN*WAVE_LEN);
   const amp=Math.pow(10,imp.gain/20); for(let i=0;i<prev.length;i++)prev[i]*=amp;
-  drawWave($('#impPreview'),prev,{lw:1}); drawWave($('#impTable'),computeImport(),{lw:1,color:'#c0392b'}); }
+  drawWave($('#impPreview'),prev,{lw:1}); drawWave($('#impTable'),computeImport(),{lw:1,color:cssVar('--accent','#c0392b')}); }
 
 // ---------------- Bind everything ----------------
 function setMorphMode(m){ audio.modeXY=(m==='xy'); $$('#morphMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
@@ -268,6 +269,17 @@ function bind(){
   $$('#tools .tool').forEach(el=>el.addEventListener('click',()=>{ $$('#tools .tool').forEach(x=>x.classList.remove('active'));el.classList.add('active');currentTool=el.dataset.tool; }));
 
   $('#mNewBank').onclick=newBank; $('#mShuffle').onclick=shuffleBank; $('#mDupAll').onclick=dupToAll;
+
+  // Theme toggle (persists; repaints canvases so plot colors follow theme)
+  const applyTheme=(t)=>{ if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+    else document.documentElement.removeAttribute('data-theme');
+    try{ localStorage.setItem('osiris-theme', t); }catch{}
+    refreshPost(); if($('#page-grid').classList.contains('active'))drawXY();
+    if($('#page-waterfall').classList.contains('active'))drawWaterfall(); };
+  let savedTheme='light'; try{ savedTheme=localStorage.getItem('osiris-theme')||'light'; }catch{}
+  if(savedTheme==='dark') document.documentElement.setAttribute('data-theme','dark');
+  $('#mTheme').onclick=()=>{ const cur=document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light';
+    applyTheme(cur==='dark'?'light':'dark'); };
   $('#mSaveBank').onclick=saveBankWAV; $('#mSaveWave').onclick=saveWaveWAV;
   let loadTarget='bank';
   $('#mLoadBank').onclick=()=>{loadTarget='bank';$('#fileInput').click();};

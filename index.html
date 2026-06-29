@@ -1,46 +1,85 @@
 <meta charset="utf-8">
 <title>OsirisEdit Web</title>
 <style>
+  /* Modbap brand fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
   :root{
-    --bg:#d8d8d8; --panel:#efefef; --panel2:#e4e4e4; --ink:#1d1d1d; --muted:#5a5a5a;
-    --line:#9a9a9a; --grid:#cfcfcf; --grid2:#bdbdbd; --plot:#2b2b2b;
-    --accent:#c0392b; --accent2:#2d6cdf; --sel:#f0c674; --green:#27ae60;
-    --mono:"DejaVu Sans Mono","SFMono-Regular",Menlo,Consolas,monospace;
+    /* ── Modbap brand tokens (hub / light — default) ── */
+    --mb-blue:#0489D8; --mb-blue-dk:#0372b8; --mb-blue-lt:#d8edf8;
+    --mb-rose:#AC296C; --mb-rose-dk:#8f1f58; --mb-rose-lt:#f5dcea;
+    --mb-violet:#7B6CD8;            /* knob-arc violet seen in ORBT, between blue & rose */
+    --mb-ok:#1a5c38; --mb-ok-bg:#e4f3eb;
+
+    /* ── App surface (mapped to Modbap hub "warm paper") ── */
+    --bg:#ede9e2;       /* paper-warm — page */
+    --panel:#f5f2ed;    /* paper — cards */
+    --panel2:#e2ddd6;   /* paper-mid — transport/tabs/pills */
+    --ink:#191714;      /* hub ink */
+    --muted:#8c877f;    /* ink-4 */
+    --line:#d5cfc6;     /* paper-rule */
+    --grid:#ded8cf; --grid2:#cfc8bd; --plot:#2e2b27;
+
+    /* ── Accents (brand) ── */
+    --accent:var(--mb-rose);     /* primary: active tool, selected wave, post trace */
+    --accent2:var(--mb-blue);    /* secondary: harmonics, tabs, morph */
+    --accent3:var(--mb-violet);  /* tertiary: morph/grid highlights */
+    --sel:#f0c674;
+    --green:var(--mb-ok);
+
+    --font-logo:'Barlow Condensed','Oswald','Arial Narrow',sans-serif;
+    --font-ui:'Montserrat',sans-serif;
+    --mono:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --r-sm:4px; --r-md:6px; --r-lg:10px;
+    --sh-sm:0 1px 3px rgba(25,23,20,.07),0 1px 2px rgba(25,23,20,.05);
+    --sh-md:0 4px 16px rgba(25,23,20,.09),0 2px 4px rgba(25,23,20,.05);
+  }
+
+  [data-theme="dark"]{
+    /* Modbap dark-shell context */
+    --bg:#111111; --panel:#1b1b1b; --panel2:#181818;
+    --ink:#f8f8f8; --muted:#8c877f; --line:rgba(255,255,255,.12);
+    --grid:#2a2a2a; --grid2:#383838; --plot:#e8e4dc;
+    --accent:#E06AA5;            /* brand-pink-light — pops on dark */
+    --accent2:#5A8FC2;           /* brand-blue */
+    --accent3:#9A8CF0;           /* lifted violet */
+    --green:#3ea66b;
+    --sh-sm:0 1px 3px rgba(0,0,0,.4); --sh-md:0 6px 20px rgba(0,0,0,.5);
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
     font-family:var(--mono);font-size:13px;-webkit-font-smoothing:antialiased}
   #app{display:flex;flex-direction:column;height:100%}
-  .menubar{display:flex;gap:2px;align-items:center;padding:4px 8px;background:#cdcdcd;
+  .menubar{display:flex;gap:6px;align-items:center;padding:7px 12px;background:var(--panel);box-shadow:var(--sh-sm);
     border-bottom:1px solid var(--line);user-select:none;flex-wrap:wrap}
-  .brand{font-weight:700;letter-spacing:.5px;margin-right:10px}
-  .brand b{color:var(--accent)}
-  .mbtn{padding:3px 9px;background:var(--panel);border:1px solid var(--line);border-radius:3px;
-    cursor:pointer;font:inherit;color:inherit}
-  .mbtn:hover{background:#fff}
+  .brand{font-family:var(--font-logo);font-weight:800;font-size:18px;letter-spacing:.01em;margin-right:14px;text-transform:lowercase;color:var(--ink)}
+  .brand b{color:var(--accent);font-weight:800}
+  .mbtn{padding:5px 11px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);
+    cursor:pointer;font:inherit;color:inherit;transition:.13s ease}
+  .mbtn:hover{background:var(--mb-rose-lt);border-color:var(--accent);color:var(--accent)}
   .mbtn:active{transform:translateY(1px)}
   .spacer{flex:1}
   .transport{display:flex;gap:8px;align-items:center;padding:6px 10px;background:var(--panel2);
     border-bottom:1px solid var(--line);flex-wrap:wrap}
   .transport label{color:var(--muted)}
-  .play{background:var(--green);color:#fff;border:none;border-radius:3px;padding:5px 16px;
+  .play{background:var(--green);color:#fff;border:none;border-radius:var(--r-sm);padding:6px 18px;
     cursor:pointer;font:inherit;font-weight:700}
-  .play.off{background:#888}
+  .play.off{background:var(--muted)}
   input[type=range]{accent-color:var(--accent);vertical-align:middle}
-  .tabs{display:flex;gap:1px;background:#cdcdcd;border-bottom:1px solid var(--line)}
+  .tabs{display:flex;gap:2px;background:var(--panel2);border-bottom:1px solid var(--line);padding:0 6px}
   .tab{padding:7px 16px;cursor:pointer;background:var(--panel2);color:var(--muted);
     border:1px solid transparent;border-bottom:none}
-  .tab.active{background:var(--panel);color:var(--ink);font-weight:700;border-color:var(--line)}
+  .tab.active{background:var(--panel);color:var(--accent);font-weight:700;border-color:var(--line);box-shadow:inset 0 -2px 0 var(--accent)}
   .body{flex:1;overflow:auto;padding:10px}
   .page{display:none}.page.active{display:block}
   .row{display:flex;gap:10px;flex-wrap:wrap}
   .col{flex:1;min-width:280px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:8px;margin-bottom:10px}
-  .card h3{margin:0 0 6px;font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);padding:12px;margin-bottom:12px;box-shadow:var(--sh-sm)}
+  .card h3{margin:0 0 8px;font-family:var(--font-ui);font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.12em;text-transform:uppercase}
   canvas{display:block;width:100%;background:#ececec;border:1px solid var(--line);border-radius:3px;touch-action:none}
   .tools{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
-  .tool{display:flex;align-items:center;gap:4px;padding:4px 9px;background:var(--panel2);
-    border:1px solid var(--line);border-radius:14px;cursor:pointer}
+  .tool{display:flex;align-items:center;gap:5px;padding:5px 12px;background:var(--panel2);
+    border:1px solid var(--line);border-radius:16px;cursor:pointer;transition:.13s ease}
   .tool.active{background:var(--accent);color:#fff;border-color:var(--accent)}
   .tool .dot{width:9px;height:9px;border-radius:50%;background:var(--line)}
   .tool.active .dot{background:#fff}
@@ -60,7 +99,7 @@
   .seg button{padding:3px 8px;background:var(--panel2);border:1px solid var(--line);
     border-radius:3px;cursor:pointer;font:inherit}
   .seg button.on{background:var(--accent2);color:#fff;border-color:var(--accent2)}
-  .status{font-size:11px;color:var(--muted);padding:3px 10px;border-top:1px solid var(--line);background:#cdcdcd}
+  .status{font-size:11px;color:var(--muted);padding:5px 12px;border-top:1px solid var(--line);background:var(--panel2);font-family:var(--font-ui);letter-spacing:.02em}
   .small{font-size:11px}
   select,input[type=number]{font:inherit;padding:2px 4px;border:1px solid var(--line);border-radius:3px;background:#fff}
   .num{width:64px}
@@ -77,6 +116,7 @@
     <button class="mbtn" id="mLoadWave">Load Wave</button>
     <button class="mbtn" id="mSaveWave">Save Wave</button>
     <span class="spacer"></span>
+    <button class="mbtn" id="mTheme" title="Toggle light / dark">◐ Theme</button>
     <button class="mbtn" id="mShuffle">Shuffle</button>
     <button class="mbtn" id="mDupAll">Duplicate → All</button>
   </div>

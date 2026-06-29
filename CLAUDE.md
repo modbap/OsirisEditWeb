@@ -73,3 +73,11 @@ See `docs/OSIRISEDIT_VS_WAVEEDIT.md` for exact behavior. Summary:
 - No browser storage APIs; state lives in memory.
 - Touch `src/wave.js` -> run `npm test` before calling it done.
 - Touch UI -> check against the manual and the parity spec, not memory of WaveEdit.
+
+## Deploy / custom domain (do not break this)
+
+Served via GitHub Pages at **https://osirisedit.modbap.com** (CNAME `osirisedit` → `modbap.github.io` at GoDaddy).
+The repo-root **`CNAME`** file contains `osirisedit.modbap.com` and binds the custom
+domain. It MUST stay in the repo root. Installer drops use `git add -A`, so never
+delete or overwrite `CNAME` — if a drop omits it, GitHub unbinds the domain and the
+site 404s on the subdomain until it's restored.
