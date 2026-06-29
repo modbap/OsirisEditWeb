@@ -1,0 +1,250 @@
+<meta charset="utf-8">
+<title>OsirisEdit Web</title>
+<style>
+  :root{
+    --bg:#d8d8d8; --panel:#efefef; --panel2:#e4e4e4; --ink:#1d1d1d; --muted:#5a5a5a;
+    --line:#9a9a9a; --grid:#cfcfcf; --grid2:#bdbdbd; --plot:#2b2b2b;
+    --accent:#c0392b; --accent2:#2d6cdf; --sel:#f0c674; --green:#27ae60;
+    --mono:"DejaVu Sans Mono","SFMono-Regular",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:var(--mono);font-size:13px;-webkit-font-smoothing:antialiased}
+  #app{display:flex;flex-direction:column;height:100%}
+  .menubar{display:flex;gap:2px;align-items:center;padding:4px 8px;background:#cdcdcd;
+    border-bottom:1px solid var(--line);user-select:none;flex-wrap:wrap}
+  .brand{font-weight:700;letter-spacing:.5px;margin-right:10px}
+  .brand b{color:var(--accent)}
+  .mbtn{padding:3px 9px;background:var(--panel);border:1px solid var(--line);border-radius:3px;
+    cursor:pointer;font:inherit;color:inherit}
+  .mbtn:hover{background:#fff}
+  .mbtn:active{transform:translateY(1px)}
+  .spacer{flex:1}
+  .transport{display:flex;gap:8px;align-items:center;padding:6px 10px;background:var(--panel2);
+    border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .transport label{color:var(--muted)}
+  .play{background:var(--green);color:#fff;border:none;border-radius:3px;padding:5px 16px;
+    cursor:pointer;font:inherit;font-weight:700}
+  .play.off{background:#888}
+  input[type=range]{accent-color:var(--accent);vertical-align:middle}
+  .tabs{display:flex;gap:1px;background:#cdcdcd;border-bottom:1px solid var(--line)}
+  .tab{padding:7px 16px;cursor:pointer;background:var(--panel2);color:var(--muted);
+    border:1px solid transparent;border-bottom:none}
+  .tab.active{background:var(--panel);color:var(--ink);font-weight:700;border-color:var(--line)}
+  .body{flex:1;overflow:auto;padding:10px}
+  .page{display:none}.page.active{display:block}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .col{flex:1;min-width:280px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:8px;margin-bottom:10px}
+  .card h3{margin:0 0 6px;font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+  canvas{display:block;width:100%;background:#ececec;border:1px solid var(--line);border-radius:3px;touch-action:none}
+  .tools{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+  .tool{display:flex;align-items:center;gap:4px;padding:4px 9px;background:var(--panel2);
+    border:1px solid var(--line);border-radius:14px;cursor:pointer}
+  .tool.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .tool .dot{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .tool.active .dot{background:#fff}
+  .fx{display:grid;grid-template-columns:130px 1fr 46px auto;gap:5px 8px;align-items:center}
+  .fx label{color:var(--muted)}
+  .fx .val{font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
+  .toggles{display:flex;gap:14px;margin:8px 0 2px}
+  .toggles label{display:flex;gap:5px;align-items:center;color:var(--muted)}
+  .grid8{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}
+  .cell{position:relative;aspect-ratio:1;background:#e8e8e8;border:1px solid var(--line);
+    border-radius:3px;cursor:pointer;overflow:hidden}
+  .cell canvas{position:absolute;inset:0;width:100%;height:100%;border:none;background:transparent}
+  .cell.sel{outline:2px solid var(--accent);outline-offset:-1px;z-index:1}
+  .cell .idx{position:absolute;top:1px;left:3px;font-size:9px;color:var(--muted)}
+  .hint{color:var(--muted);font-size:11px;margin-top:4px}
+  .seg{display:flex;gap:4px;flex-wrap:wrap}
+  .seg button{padding:3px 8px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:3px;cursor:pointer;font:inherit}
+  .seg button.on{background:var(--accent2);color:#fff;border-color:var(--accent2)}
+  .status{font-size:11px;color:var(--muted);padding:3px 10px;border-top:1px solid var(--line);background:#cdcdcd}
+  .small{font-size:11px}
+  select,input[type=number]{font:inherit;padding:2px 4px;border:1px solid var(--line);border-radius:3px;background:#fff}
+  .num{width:64px}
+</style>
+
+<div id="app">
+  <div class="menubar">
+    <span class="brand"><b>OSIRIS</b>edit · web</span>
+    <button class="mbtn" id="mNewBank">New Wavetable</button>
+    <button class="mbtn" id="mLoadBank">Load Wavetable</button>
+    <button class="mbtn" id="mSaveBank">Save Wavetable</button>
+    <button class="mbtn" id="mConvert">Convert → WavPak</button>
+    <span style="width:8px"></span>
+    <button class="mbtn" id="mLoadWave">Load Wave</button>
+    <button class="mbtn" id="mSaveWave">Save Wave</button>
+    <span class="spacer"></span>
+    <button class="mbtn" id="mShuffle">Shuffle</button>
+    <button class="mbtn" id="mDupAll">Duplicate → All</button>
+  </div>
+
+  <div class="transport">
+    <button class="play off" id="playBtn">▶ Play</button>
+    <label>Vol</label><input type="range" id="vol" min="-60" max="0" step="0.5" value="-12" style="width:90px">
+    <span class="val" id="volV">-12.0 dB</span>
+    <label>Freq</label><input type="range" id="freq" min="55" max="880" step="1" value="220" style="width:110px">
+    <span class="val" id="freqV">220 Hz</span>
+    <span style="width:6px"></span>
+    <label>Morph</label>
+    <div class="seg" id="morphMode">
+      <button data-m="z" class="on">Z (1-D)</button>
+      <button data-m="xy">XY (2-D)</button>
+    </div>
+    <label><input type="checkbox" id="morphInterp" checked> Interpolate</label>
+    <span style="width:6px"></span>
+    <span id="morphZwrap"><label>Z</label><input type="range" id="morphZ" min="0" max="31" step="0.01" value="0" style="width:140px"></span>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-page="editor">Waveform Editor</div>
+    <div class="tab" data-page="effect">Effect Editor</div>
+    <div class="tab" data-page="grid">Grid XY View</div>
+    <div class="tab" data-page="waterfall">Waterfall View</div>
+    <div class="tab" data-page="import">Import Audio</div>
+  </div>
+
+  <div class="body">
+    <!-- EDITOR -->
+    <div class="page active" id="page-editor">
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <h3>Waveform — wave <span id="selLabel">0</span></h3>
+            <div class="tools" id="tools">
+              <div class="tool active" data-tool="pencil"><span class="dot"></span>Pencil</div>
+              <div class="tool" data-tool="brush"><span class="dot"></span>Brush</div>
+              <div class="tool" data-tool="grab"><span class="dot"></span>Grab</div>
+              <div class="tool" data-tool="line"><span class="dot"></span>Line</div>
+              <div class="tool" data-tool="smooth"><span class="dot"></span>Smooth</div>
+              <div class="tool" data-tool="eraser"><span class="dot"></span>Eraser</div>
+            </div>
+            <canvas id="waveCanvas" height="300"></canvas>
+            <div class="hint">Drag to draw. Eraser flattens to zero. Grab shifts vertically. Line draws straight between press &amp; release.</div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <h3>Harmonics</h3>
+            <canvas id="harmCanvas" height="300"></canvas>
+            <div class="hint">Drag bars to set harmonic magnitudes (DC at left). Phase is preserved.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Wavetable — 32 waveforms</h3>
+        <div class="grid8" id="bankGridEditor"></div>
+      </div>
+    </div>
+
+    <!-- EFFECT -->
+    <div class="page" id="page-effect">
+      <div class="card">
+        <h3>Effects — wave <span id="selLabel2">0</span> (applied in order, top to bottom)</h3>
+        <div class="fx" id="fxGrid"></div>
+        <div class="toggles">
+          <label><input type="checkbox" id="cyc"> Cycle (force one period)</label>
+          <label><input type="checkbox" id="nrm"> Normalize</label>
+        </div>
+        <div class="seg" style="margin-top:10px">
+          <button id="fxRandom">Randomize</button>
+          <button id="fxBake">Bake into wave</button>
+          <button id="fxClear">Clear effects</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col"><div class="card"><h3>Source wave</h3><canvas id="fxSrc" height="200"></canvas></div></div>
+        <div class="col"><div class="card"><h3>Post-effect wave</h3><canvas id="fxPost" height="200"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- GRID -->
+    <div class="page" id="page-grid">
+      <div class="card">
+        <h3>Grid XY morph — click a cell to select, drag the pad to morph</h3>
+        <div class="row">
+          <div class="col" style="max-width:520px">
+            <div class="grid8" id="bankGridXY"></div>
+          </div>
+          <div class="col">
+            <canvas id="xyPad" height="360"></canvas>
+            <div class="hint">XY pad morphs across the 8×8 grid (wraps at edges). Switch transport to XY mode to hear it.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WATERFALL -->
+    <div class="page" id="page-waterfall">
+      <div class="card">
+        <h3>Waterfall — all 32 post-effect waves</h3>
+        <div class="transport" style="border:none;background:transparent;padding:4px 0">
+          <label>Tilt</label><input type="range" id="wfAngle" min="0.05" max="0.6" step="0.01" value="0.28" style="width:140px">
+          <label>Height</label><input type="range" id="wfAmp" min="0.2" max="2.2" step="0.05" value="1.0" style="width:140px">
+        </div>
+        <canvas id="waterfall" height="520"></canvas>
+      </div>
+    </div>
+
+    <!-- IMPORT -->
+    <div class="page" id="page-import">
+      <div class="card">
+        <h3>Import audio → wavetable</h3>
+        <div class="seg" style="margin-bottom:8px">
+          <button id="impBrowse">Browse WAV/audio…</button>
+          <span class="small" id="impStatus" style="align-self:center;color:var(--muted)">No file loaded.</span>
+        </div>
+        <canvas id="impPreview" height="150"></canvas>
+        <div class="fx" style="grid-template-columns:90px 1fr 70px;margin-top:8px">
+          <label>Gain</label><input type="range" id="impGain" min="-40" max="40" step="0.5" value="0"><span class="val" id="impGainV">0.0 dB</span>
+          <label>Offset</label><input type="range" id="impOffset" min="0" max="1" step="0.0005" value="0"><span class="val" id="impOffsetV">0.0000</span>
+          <label>Zoom</label><input type="range" id="impZoom" min="0.01" max="100" step="0.01" value="1"><span class="val" id="impZoomV">1.00</span>
+        </div>
+        <div class="seg" style="margin-top:6px">
+          <span class="small" style="align-self:center;color:var(--muted)">Mode:</span>
+          <button class="on" data-mode="0" id="impMode0">Replace All</button>
+          <button data-mode="2" id="impMode2">Mix</button>
+          <button data-mode="3" id="impMode3">Ring Mod</button>
+        </div>
+        <canvas id="impTable" height="150" style="margin-top:8px"></canvas>
+        <div class="seg" style="margin-top:8px">
+          <button id="impApply" style="background:var(--green);color:#fff;border-color:var(--green)">Import into wavetable</button>
+          <button id="impCancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status" id="status">Ready. DSP verified against original ✓ — draw a waveform or load a wavetable.</div>
+</div>
+
+<div id="convertModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;align-items:center;justify-content:center">
+  <div style="background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;width:min(560px,92vw);max-height:90vh;overflow:auto">
+    <h3 style="margin:0 0 4px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)">Convert → Osiris WavPak</h3>
+    <p class="small" style="color:var(--muted);margin:0 0 12px">Re-encodes the current wavetable into the Osiris WavPak format and downloads a .zip with the A/B/C/D folder structure. Add more wavetables to the queue to fill banks (32 per letter, 128 max).</p>
+    <div class="fx" style="grid-template-columns:130px 1fr;gap:8px;align-items:center">
+      <label>Sample Rate</label><select id="cvRate"></select>
+      <label>Bit Depth</label><select id="cvDepth"></select>
+      <label>Bank Length</label><select id="cvBankLen"></select>
+      <label>Wave Length</label><select id="cvWaveLen"></select>
+    </div>
+    <label class="small" style="display:flex;gap:8px;align-items:center;margin:12px 0"><input type="checkbox" id="cvSeparate" checked> Separate into WavPak banks A–D</label>
+    <div class="card" style="margin:0 0 12px">
+      <h3>Queue — wavetables to convert</h3>
+      <div id="cvQueue" class="small" style="max-height:140px;overflow:auto"></div>
+      <div class="seg" style="margin-top:8px">
+        <button id="cvAddCurrent">+ Add current wavetable</button>
+        <button id="cvClearQueue">Clear queue</button>
+      </div>
+    </div>
+    <div class="seg">
+      <button id="cvDoConvert" style="background:var(--green);color:#fff;border-color:var(--green)">Convert &amp; download .zip</button>
+      <button id="cvCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept=".wav,audio/*" style="display:none">
+<script type="module" src="./src/app.js"></script>

@@ -1,0 +1,23 @@
+{
+  "name": "osiris-edit-web",
+  "version": "0.1.0",
+  "description": "Browser-based wavetable editor for the Modbap Osiris — a web port of OsirisEdit (lineage: WaveEdit by Andrew Belt).",
+  "type": "module",
+  "scripts": {
+    "test": "node test/verify-dsp.mjs && node test/check-logic.mjs && node test/check-wavpak.mjs && node test/smoke-ui.mjs",
+    "test:dsp": "node test/verify-dsp.mjs",
+    "test:logic": "node test/check-logic.mjs",
+    "test:wavpak": "node test/check-wavpak.mjs",
+    "serve": "node serve.mjs",
+    "dev": "node serve.mjs"
+  },
+  "keywords": ["wavetable", "synthesizer", "osiris", "modbap", "eurorack", "dsp", "web-audio"],
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/modbap/OsirisEditWeb.git"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  }
+}
