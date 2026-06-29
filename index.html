@@ -18,14 +18,14 @@
     --ink:#191714;      /* hub ink */
     --muted:#8c877f;    /* ink-4 */
     --line:#d5cfc6;     /* paper-rule */
-    --grid:#ded8cf; --grid2:#cfc8bd; --plot:#2e2b27;
+    --grid:#ded8cf; --grid2:#cfc8bd; --plot:#2e2b27; --plotbg:#ececec;
 
     /* ── Accents (brand) ── */
     --accent:var(--mb-rose);     /* primary: active tool, selected wave, post trace */
     --accent2:var(--mb-blue);    /* secondary: harmonics, tabs, morph */
     --accent3:var(--mb-violet);  /* tertiary: morph/grid highlights */
     --sel:#f0c674;
-    --green:var(--mb-ok);
+    --green:var(--mb-blue);   /* action/confirm buttons use Modbap blue, not green */
 
     --font-logo:'Barlow Condensed','Oswald','Arial Narrow',sans-serif;
     --font-ui:'Montserrat',sans-serif;
@@ -39,11 +39,11 @@
     /* Modbap dark-shell context */
     --bg:#111111; --panel:#1b1b1b; --panel2:#181818;
     --ink:#f8f8f8; --muted:#8c877f; --line:rgba(255,255,255,.12);
-    --grid:#2a2a2a; --grid2:#383838; --plot:#e8e4dc;
+    --grid:#2a2a2a; --grid2:#383838; --plot:#e8e4dc; --plotbg:#242424;
     --accent:#E06AA5;            /* brand-pink-light — pops on dark */
     --accent2:#5A8FC2;           /* brand-blue */
     --accent3:#9A8CF0;           /* lifted violet */
-    --green:#3ea66b;
+    --green:#5A8FC2;   /* action buttons: Modbap brand-blue, lifted for dark */
     --sh-sm:0 1px 3px rgba(0,0,0,.4); --sh-md:0 6px 20px rgba(0,0,0,.5);
   }
   *{box-sizing:border-box}
@@ -87,7 +87,7 @@
   .libbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);flex-wrap:wrap}
   .genGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
   .genGrid button{font:inherit;font-size:13px;padding:12px 10px;background:var(--panel2);border:1px solid var(--line);
-    border-radius:var(--r-md);cursor:pointer;transition:.13s ease;text-align:left}
+    border-radius:var(--r-md);cursor:pointer;transition:.13s ease;text-align:left;color:var(--ink)}
   .genGrid button:hover{background:var(--mb-rose-lt);border-color:var(--accent);color:var(--accent)}
   .genGrid button .gen-sub{display:block;font-size:10px;color:var(--muted);margin-top:3px;font-family:var(--font-ui);letter-spacing:.04em}
   .genGrid button:hover .gen-sub{color:var(--accent)}
@@ -108,7 +108,7 @@
   .col{flex:1;min-width:280px}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);padding:12px;margin-bottom:12px;box-shadow:var(--sh-sm)}
   .card h3{margin:0 0 8px;font-family:var(--font-ui);font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-  canvas{display:block;width:100%;background:#ececec;border:1px solid var(--line);border-radius:3px;touch-action:none}
+  canvas{display:block;width:100%;background:var(--plotbg);border:1px solid var(--line);border-radius:3px;touch-action:none}
   .tools{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
   .tool{display:flex;align-items:center;gap:5px;padding:5px 12px;background:var(--panel2);
     border:1px solid var(--line);border-radius:16px;cursor:pointer;transition:.13s ease}
@@ -121,7 +121,7 @@
   .toggles{display:flex;gap:14px;margin:8px 0 2px}
   .toggles label{display:flex;gap:5px;align-items:center;color:var(--muted)}
   .grid8{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}
-  .cell{position:relative;aspect-ratio:1;background:#e8e8e8;border:1px solid var(--line);
+  .cell{position:relative;aspect-ratio:1;background:var(--plotbg);border:1px solid var(--line);
     border-radius:3px;cursor:pointer;overflow:hidden}
   .cell canvas{position:absolute;inset:0;width:100%;height:100%;border:none;background:transparent}
   .cell.sel{outline:2px solid var(--accent);outline-offset:-1px;z-index:1}
@@ -129,11 +129,12 @@
   .hint{color:var(--muted);font-size:11px;margin-top:4px}
   .seg{display:flex;gap:4px;flex-wrap:wrap}
   .seg button{padding:3px 8px;background:var(--panel2);border:1px solid var(--line);
-    border-radius:3px;cursor:pointer;font:inherit}
+    border-radius:3px;cursor:pointer;font:inherit;color:var(--ink)}
   .seg button.on{background:var(--accent2);color:#fff;border-color:var(--accent2)}
   .status{font-size:11px;color:var(--muted);padding:5px 12px;border-top:1px solid var(--line);background:var(--panel2);font-family:var(--font-ui);letter-spacing:.02em}
   .small{font-size:11px}
-  select,input[type=number]{font:inherit;padding:2px 4px;border:1px solid var(--line);border-radius:3px;background:#fff}
+  select,input[type=number]{font:inherit;padding:2px 4px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink)}
+  button{color:var(--ink)}  /* themed default; explicit button styles override */
   .num{width:64px}
 </style>
 
