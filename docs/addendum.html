@@ -51,7 +51,17 @@
 
   <div class="note">OsirisEdit Web runs entirely in the browser at <a href="https://osirisedit.modbap.com">osirisedit.modbap.com</a>
   — no install, no native binary, on macOS, Windows, Linux, or iPad. It replaces the discontinued desktop
-  build (which relied on Apple's Rosetta) while keeping the DSP faithful to the original.</p>
+  build (which relied on Apple's Rosetta) while keeping the DSP faithful to the original.</div>
+
+  <h2>Quick start — building a WavPak</h2>
+  <p>The fastest path from nothing to a finished SD-card WavPak:</p>
+  <ul>
+    <li>Open the <strong>Library</strong> tab and turn on <strong>Auto-collect on Generate / Save</strong>.</li>
+    <li>Hit <code>⚡ Generate</code>, pick a generator, set <strong>Coherence</strong>, and tweak the result in the editor if you like.
+      Each generated (or saved) wavetable drops into the Library automatically.</li>
+    <li>Repeat until you have a set — 32 fills bank <strong>A</strong>, 64 fills <strong>A/B</strong>, up to 128 for a full <strong>A/B/C/D</strong>.</li>
+    <li>Click <strong>Package → WavPak (.zip)</strong>, unzip onto your Osiris SD card, and you're done.</li>
+  </ul>
 
   <h2>DSP fidelity</h2>
   <p>The wavetable engine is a faithful port of the original. All twelve effects, the FFT conventions, and the
@@ -92,6 +102,10 @@
   <strong>Auto-collect on Generate / Save</strong> — up to 128. Each entry is labelled with its destination bank
   letter (A/B/C/D, 32 per letter). When ready, <strong>Package → WavPak (.zip)</strong> writes the whole set into
   the Osiris A/B/C/D folder structure in one click, ready for the SD card.</p>
+  <p>You can also pull existing saved <code>.wav</code> wavetables into the Library with <strong>+ Add saved .wav files…</strong>,
+  remove any entry with its <strong>✕</strong>, or empty the list with <strong>Clear all</strong>. The Library packages at the
+  Osiris-standard format (16-bit · 44.1 kHz · 32×256, A–D separated). For non-standard rate/bit-depth/length, use
+  <code>Convert → WavPak</code> instead.</p>
   <p class="muted">Saved wavetable files are named <code>Osiris_WT_01.wav</code>, <code>Osiris_WT_02.wav</code>, …
   (incrementing) — a single file is one wavetable, never a "bank".</p>
 
@@ -106,6 +120,6 @@
 
   <footer>
     <span>Modbap Modular · Beatppl</span>
-    <span class="ver">Addendum updated for Generate + Convert. See <a href="https://osirisedit.modbap.com">osirisedit.modbap.com</a></span>
+    <span class="ver">Updated for the Wavetable Library, Generate, and Convert. See <a href="https://osirisedit.modbap.com">osirisedit.modbap.com</a></span>
   </footer>
 </div>
