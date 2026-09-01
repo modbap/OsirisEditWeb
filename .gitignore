@@ -5,3 +5,8 @@ dist/
 .env
 .vscode/
 .idea/
+
+# local backups, never publish: GitHub Pages serves whatever is in the branch
+*.bak*
+*.orig
+*~

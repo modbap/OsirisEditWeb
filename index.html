@@ -57,7 +57,12 @@
   .wordmark .wm-edit{color:var(--accent)}
   .wordmark .wm-web{font-family:var(--font-ui);font-weight:500;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);vertical-align:6px;margin-left:9px}
   .subtitle{font-family:var(--font-ui);font-weight:600;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:6px}
-  .mmark{font-family:var(--font-logo);font-weight:800;font-size:30px;line-height:.8;color:var(--ink)}
+  .mmark{font-family:var(--font-logo);font-weight:800;font-size:30px;line-height:.8;color:var(--ink);
+    display:flex;flex-direction:column;align-items:flex-end;gap:7px;text-decoration:none}
+  .mmark-label{font-family:var(--font-ui);font-weight:600;font-size:11px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--muted);line-height:1;transition:color .15s}
+  .mmark:hover .mmark-label{color:var(--accent)}
+  .mmark:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:2px}
   .mmark .mdot{color:var(--accent2)}
   .menubar{display:flex;gap:6px;align-items:center;padding:9px 18px;background:var(--bg);
     border-top:1px solid var(--line);user-select:none;flex-wrap:wrap}
@@ -145,7 +150,10 @@
         <div class="wordmark"><b>OSIRIS</b><span class="wm-edit">edit</span><span class="wm-web">web</span></div>
         <div class="subtitle">Wavetable Editor for Osiris</div>
       </div>
-      <div class="mmark">m<span class="mdot">.</span></div>
+      <a class="mmark" href="https://plugins.modbap.com" title="Modbap Software">
+        <span class="mmark-m">m<span class="mdot">.</span></span>
+        <span class="mmark-label">Modbap Software</span>
+      </a>
     </div>
     <div class="menubar">
       <button class="mbtn" id="mNewBank">New Wavetable</button>
@@ -160,6 +168,10 @@
       <span class="helpwrap" id="helpWrap">
         <button class="mbtn" id="mHelp">Manual ▾</button>
         <div class="helpmenu" id="helpMenu">
+          <!-- Web Manual first: it is the complete document for this edition.
+               The v1 PDF and the addendum stay because people have linked and
+               downloaded them for years. -->
+          <a href="manual/" target="_blank" rel="noopener">Web Manual</a>
           <a href="https://cdn.shopify.com/s/files/1/0597/8665/7952/files/OsirisEdit_User_Manual_v1.pdf?v=1637768859" target="_blank" rel="noopener">Download Manual (PDF)</a>
           <a href="docs/addendum.html" target="_blank" rel="noopener">Web Edition Addendum</a>
         </div>

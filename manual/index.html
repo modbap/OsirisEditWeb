@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OsirisEdit Web, user manual</title>
+<meta name="description" content="The complete OsirisEdit Web manual: the editor, the effect chain, Generate, the Library, Convert to WavPak, and how it relates to the original desktop app.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* Class B, Editorial / Product. Same skeleton as the oneTHNG manuals so the two
+   read as one library. Self-contained on purpose: this repo ships no shared
+   stylesheet and GitHub Pages serves it flat. */
+:root{
+  --paper:#F4F1EC; --paper-2:#ECE8E1; --ink:#191714; --ink-soft:#5A554E;
+  --line:rgba(25,23,20,0.12);
+  --dark:#232C3F; --dark-3:#0C0F14; --cream:#E8E1D3;
+  --blue:#0489D8; --accent:#C63F86; --accent-dark:#933768;
+  --font-display:'Oswald',sans-serif; --font-ui:'Montserrat',sans-serif;
+  --nav-h:64px; --rail:280px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 24px);}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-ui);font-size:16.5px;line-height:1.68;overflow-x:hidden;}
+::selection{background:var(--accent);color:#fff;}
+a{color:inherit;text-decoration:none;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+img{display:block;max-width:100%;height:auto;}
+
+/* ---- NAV ---- */
+nav{position:fixed;top:0;left:0;width:100%;height:var(--nav-h);z-index:200;display:flex;align-items:center;
+  justify-content:space-between;padding:0 1.6rem;background:rgba(244,241,236,0.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);}
+.brand{font-family:var(--font-display);font-weight:700;font-size:1.15rem;letter-spacing:.02em;
+  display:flex;align-items:baseline;text-transform:uppercase;}
+.brand .lo{font-weight:400;}
+.brand .dot{color:var(--accent);}
+.brand-sep{border-left:1px solid currentColor;opacity:.28;align-self:stretch;margin:0 .85rem;}
+.brand-mb{font-weight:700;}
+.nav-right{display:flex;align-items:center;gap:1.4rem;}
+.nav-back{font-family:var(--font-display);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);}
+.nav-back:hover{color:var(--ink);}
+.nav-cta{font-family:var(--font-display);font-weight:600;font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;
+  background:var(--ink);color:var(--paper);padding:.55rem 1.1rem;border-radius:2px;}
+.nav-cta:hover{background:var(--accent);}
+.toc-toggle{display:none;font-family:var(--font-display);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
+  background:none;border:1px solid var(--line);color:var(--ink);padding:.5rem .8rem;border-radius:2px;cursor:pointer;}
+
+/* ---- SHELL ---- */
+.shell{max-width:1240px;margin:0 auto;padding:calc(var(--nav-h) + 3rem) 2rem 6rem;
+  display:grid;grid-template-columns:var(--rail) 1fr;gap:4rem;align-items:start;}
+
+/* ---- TOC RAIL ---- */
+.rail{position:sticky;top:calc(var(--nav-h) + 2rem);max-height:calc(100vh - var(--nav-h) - 4rem);overflow-y:auto;
+  padding-right:.5rem;scrollbar-width:thin;}
+.rail::-webkit-scrollbar{width:4px;}
+.rail::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px;}
+.rail-head{font-family:var(--font-display);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);padding-bottom:.9rem;margin-bottom:1rem;border-bottom:1px solid var(--line);}
+.rail ol{list-style:none;}
+.rail .ch{margin-bottom:.35rem;}
+.rail .ch > a{display:flex;gap:.65rem;font-family:var(--font-display);font-size:.86rem;font-weight:500;
+  text-transform:uppercase;letter-spacing:.04em;padding:.4rem 0;color:var(--ink);transition:color .15s;}
+.rail .ch > a .n{color:var(--ink-soft);font-size:.76rem;min-width:1.2rem;}
+.rail .ch > a:hover{color:var(--accent);}
+.rail .sub{list-style:none;border-left:1px solid var(--line);margin:.1rem 0 .8rem .35rem;padding-left:.9rem;}
+.rail .sub a{display:block;font-size:.82rem;color:var(--ink-soft);padding:.28rem 0;line-height:1.4;transition:color .15s;}
+.rail .sub a:hover{color:var(--ink);}
+.rail a.on{color:var(--accent) !important;font-weight:600;}
+.rail .sub a.on{position:relative;}
+.rail .sub a.on::before{content:"";position:absolute;left:-.95rem;top:.55rem;width:2px;height:1em;background:var(--accent);}
+
+/* ---- DOC ---- */
+.doc{min-width:0;max-width:760px;}
+.doc-head{border-bottom:1px solid var(--line);padding-bottom:2.5rem;margin-bottom:3.5rem;}
+.doc-kicker{font-family:var(--font-display);font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);}
+.doc-head h1{font-family:var(--font-display);font-weight:700;font-size:clamp(2.6rem,6vw,4rem);line-height:.94;
+  text-transform:uppercase;margin:.7rem 0 .9rem;}
+.doc-head .sub{font-family:var(--font-display);font-size:.86rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);}
+.doc-head .ver{margin-top:1.6rem;display:flex;gap:.6rem;flex-wrap:wrap;}
+.doc-head .ver a,.doc-head .ver span{font-family:var(--font-display);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid var(--line);padding:.42rem .8rem;border-radius:2px;color:var(--ink-soft);}
+.doc-head .ver a:hover{border-color:var(--ink);color:var(--ink);}
+
+.doc h2{font-family:var(--font-display);font-weight:700;font-size:clamp(1.8rem,3.4vw,2.5rem);line-height:1.02;
+  text-transform:uppercase;margin:4.5rem 0 1.4rem;padding-top:1.6rem;border-top:2px solid var(--ink);}
+.doc h2 .cn{display:block;font-size:.62rem;letter-spacing:.24em;color:var(--accent);margin-bottom:.7rem;font-weight:600;}
+.doc h3{font-family:var(--font-display);font-weight:600;font-size:1.12rem;text-transform:uppercase;letter-spacing:.05em;
+  margin:2.8rem 0 1rem;padding-bottom:.55rem;border-bottom:1px solid var(--line);}
+.doc h3 .sn{color:var(--accent);margin-right:.5rem;}
+.doc p{margin-bottom:1.1rem;}
+.doc p.lead{font-size:1.14rem;line-height:1.55;color:var(--ink);}
+.doc ul,.doc ol{margin:0 0 1.2rem 1.15rem;}
+.doc li{margin-bottom:.5rem;}
+.doc strong{font-weight:600;}
+.doc code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--paper-2);
+  padding:.1rem .35rem;border-radius:2px;}
+
+table{width:100%;border-collapse:collapse;margin:1.4rem 0 1.8rem;font-size:.92rem;}
+th{font-family:var(--font-display);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);
+  text-align:left;padding:0 .8rem .6rem 0;border-bottom:1px solid var(--accent);font-weight:600;}
+td{padding:.85rem .8rem .85rem 0;border-bottom:1px solid var(--line);vertical-align:top;}
+td:first-child{font-weight:600;white-space:nowrap;padding-right:1.4rem;}
+.table-scroll{overflow-x:auto;}
+
+.note{border-left:3px solid var(--accent);background:var(--paper-2);padding:1.15rem 1.3rem;margin:1.6rem 0;font-size:.94rem;}
+.note b{font-family:var(--font-display);display:block;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.5rem;}
+.steps{border-left:3px solid var(--ink);background:var(--paper-2);padding:1.3rem 1.4rem .6rem;margin:1.6rem 0;}
+.steps b{font-family:var(--font-display);display:block;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
+  margin-bottom:.9rem;}
+.steps ol{margin-left:1.1rem;}
+.ui{display:inline-block;font-family:var(--font-ui);font-weight:600;background:var(--dark-3);color:var(--cream);
+  padding:.12rem .5rem;border-radius:2px;font-size:.86em;letter-spacing:.01em;white-space:nowrap;}
+.chain{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:1.6rem 0;}
+.chain b{font-family:var(--font-display);font-weight:500;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;
+  border:1px solid var(--line);padding:.42rem .75rem;border-radius:2px;background:#fff;}
+.chain b.hi{border-color:var(--ink);}
+.chain i{font-style:normal;color:var(--accent);}
+
+.foot-links{display:flex;gap:1.4rem;flex-wrap:wrap;}
+footer{border-top:1px solid var(--line);margin-top:5rem;padding-top:2.2rem;font-size:.84rem;color:var(--ink-soft);
+  display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;}
+footer a:hover{color:var(--ink);}
+
+/* The brand is text here, not a wordmark image, so it is wide. On a phone the
+   nav is brand + Contents + Hub and the Hub button was falling off the right
+   edge: drop the second half of the brand before that happens. */
+@media(max-width:620px){
+  nav{padding:0 1rem;}
+  .brand{font-size:1.02rem;}
+  .brand-sep,.brand-mb{display:none;}
+  .nav-right{gap:.8rem;}
+}
+@media(max-width:1020px){
+  :root{--rail:0px;}
+  .shell{grid-template-columns:1fr;gap:0;padding-left:1.4rem;padding-right:1.4rem;}
+  .toc-toggle{display:block;}
+  .nav-back{display:none;}
+  .rail{position:fixed;inset:var(--nav-h) 0 auto 0;max-height:min(70vh,560px);background:var(--paper);
+    border-bottom:1px solid var(--line);padding:1.4rem;z-index:190;display:none;
+    box-shadow:0 20px 40px -24px rgba(25,23,20,.4);}
+  .rail.open{display:block;}
+}
+@media print{
+  nav,.rail,.doc-head .ver,footer{display:none;}
+  .shell{display:block;padding:0;max-width:none;}
+  .doc{max-width:none;}
+  body{font-size:11pt;}
+  .doc h2{page-break-before:always;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="../" aria-label="OsirisEdit Web">Osiris<span class="lo">edit</span><span class="dot">.</span><span class="brand-sep"></span><span class="brand-mb">modbap<span class="dot">.</span></span></a>
+  <div class="nav-right">
+    <button class="toc-toggle" id="toc-toggle" aria-expanded="false" aria-controls="rail">Contents</button>
+    <a class="nav-back" href="../">Open the editor</a>
+    <a class="nav-back" href="https://plugins.modbap.com">Software</a>
+    <a class="nav-cta" href="https://hub.modbap.com">Hub</a>
+  </div>
+</nav>
+
+<div class="shell">
+
+  <aside class="rail" id="rail" aria-label="Contents">
+    <div class="rail-head">Web edition &middot; v1.0</div>
+    <ol>
+      <li class="ch"><a href="#about"><span class="n">1</span> About</a>
+        <ul class="sub">
+          <li><a href="#osiris">1.1 OsirisEdit and Osiris</a></li>
+          <li><a href="#why-web">1.2 Why there is a web edition</a></li>
+          <li><a href="#covers">1.3 What this manual covers</a></li>
+        </ul></li>
+      <li class="ch"><a href="#around"><span class="n">2</span> Getting around</a>
+        <ul class="sub">
+          <li><a href="#opening">2.1 Opening it</a></li>
+          <li><a href="#terms">2.2 The words</a></li>
+          <li><a href="#header">2.3 The header</a></li>
+          <li><a href="#transport">2.4 The transport</a></li>
+          <li><a href="#tabs">2.5 The tabs</a></li>
+          <li><a href="#theme">2.6 Light and dark</a></li>
+        </ul></li>
+      <li class="ch"><a href="#editor"><span class="n">3</span> The Waveform Editor</a>
+        <ul class="sub">
+          <li><a href="#tools">3.1 The drawing tools</a></li>
+          <li><a href="#harmonics">3.2 The harmonic editor</a></li>
+          <li><a href="#strip">3.3 The wavetable strip</a></li>
+          <li><a href="#shuffle">3.4 Shuffle and Duplicate to All</a></li>
+          <li><a href="#waves-io">3.5 Load Wave and Save Wave</a></li>
+        </ul></li>
+      <li class="ch"><a href="#effects"><span class="n">4</span> The Effect Editor</a>
+        <ul class="sub">
+          <li><a href="#chain">4.1 How the chain works</a></li>
+          <li><a href="#twelve">4.2 The twelve effects</a></li>
+          <li><a href="#cycle">4.3 Cycle, Normalize, Randomize</a></li>
+          <li><a href="#bake">4.4 Bake and Clear</a></li>
+        </ul></li>
+      <li class="ch"><a href="#generate"><span class="n">5</span> Generate</a>
+        <ul class="sub">
+          <li><a href="#generators">5.1 The five generators</a></li>
+          <li><a href="#coherence">5.2 Coherence</a></li>
+          <li><a href="#reroll">5.3 Re-roll</a></li>
+        </ul></li>
+      <li class="ch"><a href="#views"><span class="n">6</span> Grid XY and Waterfall</a>
+        <ul class="sub">
+          <li><a href="#grid">6.1 Grid XY View</a></li>
+          <li><a href="#waterfall">6.2 Waterfall View</a></li>
+          <li><a href="#hearing">6.3 Hearing the morph</a></li>
+        </ul></li>
+      <li class="ch"><a href="#import"><span class="n">7</span> Import Audio</a>
+        <ul class="sub">
+          <li><a href="#imp-load">7.1 Loading a file</a></li>
+          <li><a href="#imp-controls">7.2 Gain, Offset, Zoom</a></li>
+          <li><a href="#imp-modes">7.3 Replace, Mix, Ring Mod</a></li>
+        </ul></li>
+      <li class="ch"><a href="#library"><span class="n">8</span> The Library</a>
+        <ul class="sub">
+          <li><a href="#collect">8.1 Collecting wavetables</a></li>
+          <li><a href="#letters">8.2 Bank letters and the ceiling</a></li>
+          <li><a href="#package">8.3 Package to WavPak</a></li>
+        </ul></li>
+      <li class="ch"><a href="#convert"><span class="n">9</span> Convert to WavPak</a>
+        <ul class="sub">
+          <li><a href="#cv-settings">9.1 The settings</a></li>
+          <li><a href="#cv-separate">9.2 Separating into A to D</a></li>
+          <li><a href="#faithful">9.3 Faithful and Corrected</a></li>
+          <li><a href="#sdcard">9.4 Onto the SD card</a></li>
+        </ul></li>
+      <li class="ch"><a href="#files"><span class="n">10</span> Files, fidelity, help</a>
+        <ul class="sub">
+          <li><a href="#save-wt">10.1 What Save Wavetable writes</a></li>
+          <li><a href="#naming">10.2 File names</a></li>
+          <li><a href="#fidelity">10.3 Fidelity to the original</a></li>
+          <li><a href="#desktop">10.4 The desktop edition</a></li>
+          <li><a href="#help">10.5 Getting help</a></li>
+        </ul></li>
+    </ol>
+  </aside>
+
+  <main class="doc">
+    <header class="doc-head">
+      <div class="doc-kicker">OsirisEdit &middot; Web edition</div>
+      <h1>OsirisEdit<br>Web</h1>
+      <div class="sub">The wavetable editor for Osiris</div>
+      <div class="ver">
+        <span>Manual v1.0</span>
+        <span>Web edition</span>
+        <a href="https://cdn.shopify.com/s/files/1/0597/8665/7952/files/OsirisEdit_User_Manual_v1.pdf" target="_blank" rel="noopener">Original manual, PDF</a>
+        <a href="../docs/addendum.html">Web edition addendum</a>
+      </div>
+    </header>
+
+    <!-- 1 -->
+    <h2 id="about"><span class="cn">Chapter 1</span>About</h2>
+
+    <p class="lead">OsirisEdit is where you build the wavetables that Osiris plays. This edition runs in a browser, so it opens on whatever machine you happen to be sitting at.</p>
+
+    <h3 id="osiris"><span class="sn">1.1</span> OsirisEdit and Osiris</h3>
+    <p><strong>Osiris</strong> is a Modbap wavetable oscillator. It reads its wavetables from a Micro SD card, arranged in a structure called a <strong>WavPak</strong>: four folders named A, B, C and D, each holding up to 32 wavetables.</p>
+    <p><strong>OsirisEdit</strong> is the editor that makes them. You draw or generate waveforms, arrange them into a wavetable, and package the result into that A to D structure ready for the card. Nothing else is required: no account, no plugin host, no install.</p>
+
+    <h3 id="why-web"><span class="sn">1.2</span> Why there is a web edition</h3>
+    <p>The original OsirisEdit was a Mac application built for Intel machines, and on Apple Silicon it depends on Rosetta 2. As Apple retires Rosetta 2, that binary eventually stops running on new Macs. Windows users, meanwhile, never had a version at all.</p>
+    <p>Rebuilding for the browser answers both at once. The editor now opens on a Mac, a Windows machine, a Linux box or an iPad, from a link, and it keeps opening after the next platform change.</p>
+
+    <h3 id="covers"><span class="sn">1.3</span> What this manual covers</h3>
+    <p>This is the complete manual for the web edition. It stands on its own: everything you need to build a WavPak is here.</p>
+    <p>Two older documents still exist and are linked at the top of this page. The <strong>original OsirisEdit User Manual, v1</strong>, is the Mac application's manual, and its concepts are still correct. The <strong>Web Edition Addendum</strong> is the short document that first described what the browser version added. If the three ever disagree, this manual is the one that describes the software you are using.</p>
+
+    <!-- 2 -->
+    <h2 id="around"><span class="cn">Chapter 2</span>Getting around</h2>
+
+    <h3 id="opening"><span class="sn">2.1</span> Opening it</h3>
+    <p>Go to <strong>osirisedit.modbap.com</strong>. That is the whole installation procedure. It is free, there is no sign in, and nothing you make is uploaded anywhere: the editing, the generating and the packaging all happen in your own browser, and files land in your normal downloads folder.</p>
+    <div class="note">
+      <b>On an iPad</b>
+      The editor works with touch, but packaging a WavPak downloads a .zip, and getting a zip onto a Micro SD card is easier on a desktop. Build wherever you like, package where the card reader is.
+    </div>
+
+    <h3 id="terms"><span class="sn">2.2</span> The words</h3>
+    <p>Osiris has its own vocabulary and this manual uses it exactly. It matters most for the word <em>bank</em>, which means something larger here than it did in the software OsirisEdit grew out of.</p>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th>Term</th><th>What it is</th></tr></thead>
+      <tbody>
+        <tr><td>Waveform</td><td>256 samples. One cycle. The thing you draw in the editor.</td></tr>
+        <tr><td>Wavetable</td><td>A set of waveforms, normally 32 of them. The unit of work: what you edit, what you save, what you collect in the Library.</td></tr>
+        <tr><td>Bank</td><td>One letter of the SD card structure: A, B, C or D. Up to 32 wavetables per letter.</td></tr>
+        <tr><td>WavPak</td><td>The whole card structure, all four letters. Up to 128 wavetables.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="note">
+      <b>If you know WaveEdit</b>
+      WaveEdit called the 32-waveform set a "bank". Osiris does not. Here that set is a <strong>wavetable</strong>, and "bank" is reserved for the A to D grouping on the card.
+    </div>
+
+    <h3 id="header"><span class="sn">2.3</span> The header</h3>
+    <p>Across the top, left to right:</p>
+    <ul>
+      <li><span class="ui">New Wavetable</span> clears back to a starting table.</li>
+      <li><span class="ui">Load Wavetable</span> opens a saved wavetable WAV back into the editor.</li>
+      <li><span class="ui">Save Wavetable</span> writes the current 32 waveforms out as one WAV. See <a href="#save-wt">10.1</a>.</li>
+      <li><span class="ui">Convert &rarr; WavPak</span> opens the Convert dialog. See <a href="#convert">chapter 9</a>.</li>
+      <li><span class="ui">&#9889; Generate</span> fills all 32 waveforms at once. See <a href="#generate">chapter 5</a>.</li>
+      <li><span class="ui">Load Wave</span> and <span class="ui">Save Wave</span> work on the single selected waveform rather than the whole table.</li>
+      <li><span class="ui">Manual</span> holds this manual, the original PDF and the addendum.</li>
+      <li><span class="ui">&#9686; Theme</span> switches light and dark.</li>
+    </ul>
+    <p>The <strong>m.</strong> mark at the right hand end goes to Modbap Software.</p>
+
+    <h3 id="transport"><span class="sn">2.4</span> The transport</h3>
+    <p>The strip under the header auditions what you are making.</p>
+    <ul>
+      <li><span class="ui">&#9654; Play</span> starts and stops the oscillator.</li>
+      <li><span class="ui">Vol</span> and <span class="ui">Freq</span> set monitoring level and pitch. They affect what you hear, never what you save.</li>
+      <li><span class="ui">Morph</span> chooses how the playhead moves through the table: <span class="ui">Z (1-D)</span> sweeps along the 32 waveforms in order, <span class="ui">XY (2-D)</span> reads the table as the 8 by 8 grid described in <a href="#grid">6.1</a>.</li>
+      <li><span class="ui">Interpolate</span> crossfades between neighbouring waveforms instead of stepping between them. Off is the harder, more digital sound.</li>
+      <li><span class="ui">Z</span> is the position itself. Drag it to hear the table sweep.</li>
+    </ul>
+
+    <h3 id="tabs"><span class="sn">2.5</span> The tabs</h3>
+    <p>Six pages, one row of tabs:</p>
+    <div class="chain">
+      <b class="hi">Waveform Editor</b><i>&rarr;</i><b>Effect Editor</b><i>&rarr;</i><b>Grid XY View</b><i>&rarr;</i><b>Waterfall View</b><i>&rarr;</i><b>Import Audio</b><i>&rarr;</i><b>Library</b>
+    </div>
+    <p>They are views onto the same wavetable, not separate documents. Draw on one, and the waterfall, the grid and the Library snapshot all reflect it.</p>
+
+    <h3 id="theme"><span class="sn">2.6</span> Light and dark</h3>
+    <p><span class="ui">&#9686; Theme</span> toggles between the warm paper theme and a dark one. The choice is remembered in your browser, so it survives a reload. Nothing else about the app changes.</p>
+
+    <!-- 3 -->
+    <h2 id="editor"><span class="cn">Chapter 3</span>The Waveform Editor</h2>
+
+    <p class="lead">One waveform, 256 samples wide, drawn by hand. This is the page the whole app is built around.</p>
+
+    <h3 id="tools"><span class="sn">3.1</span> The drawing tools</h3>
+    <p>Pick a tool, then drag across the canvas. The vertical axis is amplitude, clamped to plus and minus one; the horizontal axis is the 256 sample positions of one cycle.</p>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th>Tool</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Pencil</td><td>Draws freehand, joining each pointer position to the last with a straight segment. The precise tool.</td></tr>
+        <tr><td>Brush</td><td>Pulls the curve toward the pointer over a soft neighbourhood rather than at a single point. Use it for gentle shaping.</td></tr>
+        <tr><td>Grab</td><td>Holds one horizontal position and moves it vertically. Good for lifting or dropping a single feature without redrawing around it.</td></tr>
+        <tr><td>Line</td><td>Draws one straight segment between where you pressed and where you released. Ramps, saw edges, hard corners.</td></tr>
+        <tr><td>Smooth</td><td>Nudges the curve gently around the pointer. Hold and work over an area to build the move up.</td></tr>
+        <tr><td>Eraser</td><td>Flattens back to zero along the drag.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="harmonics"><span class="sn">3.2</span> The harmonic editor</h3>
+    <p>Below the waveform is its spectrum. Drag the bars to set harmonic magnitudes, with DC at the left. Phase is preserved as you drag, so you are changing how much of each harmonic there is, not where it sits.</p>
+    <p>The two views are the same waveform. Draw in one and the other follows. Building a sound by pulling up the third and fifth harmonics and then cleaning the result up with the Pencil is a perfectly normal way to work.</p>
+
+    <h3 id="strip"><span class="sn">3.3</span> The wavetable strip</h3>
+    <p>Under the editor sits the whole wavetable, 32 waveforms. Click one to select it: the editor, the harmonics and the effect chain all follow the selection. The strip is how you keep an eye on the shape of the sweep while working on a single frame of it.</p>
+
+    <h3 id="shuffle"><span class="sn">3.4</span> Shuffle and Duplicate to All</h3>
+    <p><span class="ui">Shuffle</span> reorders the wavetable. The same 32 waveforms, a different journey through them, which is a fast way to find a morph you would not have arranged by hand.</p>
+    <p><span class="ui">Duplicate &rarr; All</span> copies the selected waveform across all 32 slots, effect chain included. It is the usual starting point for building a table deliberately: flatten everything to one shape, then edit outward from there.</p>
+
+    <h3 id="waves-io"><span class="sn">3.5</span> Load Wave and Save Wave</h3>
+    <p><span class="ui">Load Wave</span> and <span class="ui">Save Wave</span> act on the selected waveform alone, as a single cycle WAV. <span class="ui">Load Wavetable</span> and <span class="ui">Save Wavetable</span> act on all 32. Keep the two pairs straight and the rest follows.</p>
+
+    <!-- 4 -->
+    <h2 id="effects"><span class="cn">Chapter 4</span>The Effect Editor</h2>
+
+    <h3 id="chain"><span class="sn">4.1</span> How the chain works</h3>
+    <p>Every waveform carries its own effect chain. The Effect Editor shows the source waveform, the post-effect waveform, and twelve sliders between them, applied in order, top to bottom.</p>
+    <p>Effects are non-destructive until you say otherwise. The source waveform is what you drew; the post-effect waveform is what you hear, what the waterfall shows, and what gets written when you save. Move a slider back to the middle and the original is still there underneath.</p>
+
+    <h3 id="twelve"><span class="sn">4.2</span> The twelve effects</h3>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th>Effect</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Pre-Gain</td><td>Level into the chain. Bipolar: it cuts as well as boosts, and drives everything after it.</td></tr>
+        <tr><td>Phase Shift</td><td>Rotates the cycle. Silent on its own, audible as soon as neighbouring waveforms differ.</td></tr>
+        <tr><td>Harmonic Shift</td><td>Moves the spectrum up or down the harmonic series. Inharmonic, bell-like results at anything but whole steps.</td></tr>
+        <tr><td>Comb Filter</td><td>Adds a delayed copy of the cycle to itself. Hollow, phasey notches.</td></tr>
+        <tr><td>Ring Modulation</td><td>Multiplies the waveform against a second tone. Metallic, clangorous.</td></tr>
+        <tr><td>Chebyshev Wavefolding</td><td>Folds the peaks back on themselves. Adds harmonics fast and gets loud.</td></tr>
+        <tr><td>Sample &amp; Hold</td><td>Freezes the value in steps across the cycle. Stair-stepped, lo-fi.</td></tr>
+        <tr><td>Quantization</td><td>Reduces amplitude resolution. Bit crushing, on the amplitude axis rather than time.</td></tr>
+        <tr><td>Slew Limiter</td><td>Limits how fast the curve may move. Rounds corners and softens edges.</td></tr>
+        <tr><td>Lowpass Filter</td><td>Rolls off the upper harmonics.</td></tr>
+        <tr><td>Highpass Filter</td><td>Rolls off the lower harmonics, DC included.</td></tr>
+        <tr><td>Post-Gain</td><td>Level out of the chain. Bipolar, and the place to recover headroom after folding.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="cycle"><span class="sn">4.3</span> Cycle, Normalize, Randomize</h3>
+    <ul>
+      <li><span class="ui">Cycle (force one period)</span> makes the waveform end where it began. Osiris loops every waveform, so a mismatched start and end is a click on every cycle. Use this after freehand drawing.</li>
+      <li><span class="ui">Normalize</span> scales the waveform up to full range without changing its shape.</li>
+      <li><span class="ui">Randomize</span> throws new values at the effect chain for the selected waveform. Roughly half the slots land at zero and the rest at weighted random amounts, so the result is usually a few strong effects rather than a wall of twelve. It is a good way to find settings you would not have chosen.</li>
+    </ul>
+
+    <h3 id="bake"><span class="sn">4.4</span> Bake and Clear</h3>
+    <p><span class="ui">Bake into wave</span> writes the post-effect result into the source waveform and resets the sliders. The sound stays the same and the chain is free for a second pass. This is how you stack more processing than twelve sliders allow.</p>
+    <p><span class="ui">Clear effects</span> resets the chain and leaves the source waveform alone.</p>
+    <div class="note">
+      <b>Baking is the one destructive step</b>
+      Everything else in the effect chain can be undone by moving a slider back. Baking cannot. Save the wavetable first if you might want the version before.
+    </div>
+
+    <!-- 5 -->
+    <h2 id="generate"><span class="cn">Chapter 5</span>Generate</h2>
+
+    <p class="lead">New in the web edition. <span class="ui">&#9889; Generate</span> fills all 32 waveforms with generated content in one click, so a table starts as something to react to instead of a blank canvas.</p>
+
+    <h3 id="generators"><span class="sn">5.1</span> The five generators</h3>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th>Generator</th><th>What it makes</th></tr></thead>
+      <tbody>
+        <tr><td>Harmonic Morph</td><td>Interpolates one spectrum into another across the table. Smooth and musical, the safest starting point.</td></tr>
+        <tr><td>Additive Random</td><td>Random harmonic stacks with falloff, lightly correlated from waveform to waveform. Evolving textures.</td></tr>
+        <tr><td>Catalog Shapes</td><td>Morphs between classic waveforms: sine, saw, square, pulse, triangle, formant.</td></tr>
+        <tr><td>Glitch / Chaos</td><td>Sparse bright spectra with sample glitches thrown in. Harsh and digital.</td></tr>
+        <tr><td>FM / Phase Dist</td><td>A carrier modulated by a swept ratio and index. Metallic, and it moves a lot across the table.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="coherence"><span class="sn">5.2</span> Coherence</h3>
+    <p>One slider, and the most important control in the dialog. It sets how smoothly the 32 waveforms evolve.</p>
+    <ul>
+      <li>At <strong>1</strong>, the table glides: each waveform is close to its neighbours and the morph is continuous.</li>
+      <li>At <strong>0</strong>, each waveform is independent and sweeping the table jumps rather than glides.</li>
+      <li>The default, <strong>0.70</strong>, keeps a recognisable journey with enough variation to be interesting.</li>
+    </ul>
+
+    <h3 id="reroll"><span class="sn">5.3</span> Re-roll</h3>
+    <p><span class="ui">&#8635; Re-roll same generator</span> runs the same generator again with a fresh random set. Same character, different table. Keep pressing it until something is worth editing, then close the dialog and edit it.</p>
+    <div class="note">
+      <b>Generate replaces the whole table</b>
+      All 32 waveforms are overwritten. If the current table is worth keeping, save it or add it to the Library before you generate.
+    </div>
+
+    <!-- 6 -->
+    <h2 id="views"><span class="cn">Chapter 6</span>Grid XY and Waterfall</h2>
+
+    <h3 id="grid"><span class="sn">6.1</span> Grid XY View</h3>
+    <p>The same 32 waveforms, laid out as a grid instead of a line. Click a cell to select that waveform. Drag the pad to morph across the grid; it wraps at the edges, so movement never dead ends.</p>
+    <p>This is a different way to think about a wavetable: not a sweep from start to end, but a surface you move around on. Switch the transport to <span class="ui">XY (2-D)</span> to hear it as you drag.</p>
+
+    <h3 id="waterfall"><span class="sn">6.2</span> Waterfall View</h3>
+    <p>All 32 post-effect waveforms stacked front to back, the classic wavetable picture. <span class="ui">Tilt</span> and <span class="ui">Height</span> change the viewing angle and the vertical exaggeration.</p>
+    <p>It is the fastest way to see whether a table actually develops. A waterfall that looks like 32 copies of the same ridge will sound like one waveform no matter how far you sweep.</p>
+
+    <h3 id="hearing"><span class="sn">6.3</span> Hearing the morph</h3>
+    <p>The views show the table. The transport plays it. Set <span class="ui">Morph</span> to <span class="ui">Z (1-D)</span> and drag <span class="ui">Z</span> for the straight sweep, or <span class="ui">XY (2-D)</span> and drag the grid pad for the surface. Turn <span class="ui">Interpolate</span> off if you want to hear the individual frames step past.</p>
+
+    <!-- 7 -->
+    <h2 id="import"><span class="cn">Chapter 7</span>Import Audio</h2>
+
+    <h3 id="imp-load"><span class="sn">7.1</span> Loading a file</h3>
+    <p><span class="ui">Browse WAV/audio&hellip;</span> takes any audio file the browser can decode and slices a window of it across the 32 waveforms. The upper display is the source file; the lower one is what will land in the wavetable.</p>
+
+    <h3 id="imp-controls"><span class="sn">7.2</span> Gain, Offset, Zoom</h3>
+    <ul>
+      <li><span class="ui">Offset</span> moves the window through the file. This is what you use to find the part worth importing.</li>
+      <li><span class="ui">Zoom</span> sets how much of the file that window covers. Low values take a short slice and stretch it; high values take a long slice and compress it.</li>
+      <li><span class="ui">Gain</span> scales the level in decibels before it is written.</li>
+    </ul>
+    <p>Watch the lower display while you move these. Aim for a window where the material actually changes across its length: that change is the morph.</p>
+
+    <h3 id="imp-modes"><span class="sn">7.3</span> Replace, Mix, Ring Mod</h3>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th>Mode</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Replace All</td><td>The imported audio becomes the wavetable. The current one is discarded.</td></tr>
+        <tr><td>Mix</td><td>The imported audio is added to what is already there.</td></tr>
+        <tr><td>Ring Mod</td><td>The imported audio is multiplied against what is already there. Sparser and stranger than Mix.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p><span class="ui">Import into wavetable</span> commits it. <span class="ui">Cancel</span> clears the loaded file and leaves the wavetable alone.</p>
+    <div class="note">
+      <b>Cycle after importing</b>
+      Sliced audio rarely ends where it began. Run <span class="ui">Cycle (force one period)</span> on waveforms that click.
+    </div>
+
+    <!-- 8 -->
+    <h2 id="library"><span class="cn">Chapter 8</span>The Library</h2>
+
+    <p class="lead">New in the web edition, and the reason a full WavPak no longer takes an afternoon. The Library is a holding area for finished wavetables, and a one-click packager for the lot.</p>
+
+    <h3 id="collect"><span class="sn">8.1</span> Collecting wavetables</h3>
+    <ul>
+      <li><span class="ui">+ Add current wavetable</span> takes a snapshot of the 32 waveforms as they stand.</li>
+      <li><span class="ui">Auto-collect on Generate / Save</span> does it for you: every time you generate or save a wavetable, a copy drops into the Library. Turn this on before a session and the set builds itself.</li>
+      <li><span class="ui">+ Add saved .wav files&hellip;</span> pulls in wavetables you saved earlier, including ones from the desktop app.</li>
+      <li>The <strong>&#10005;</strong> on an entry removes it. <span class="ui">Clear all</span> empties the Library.</li>
+    </ul>
+    <p>A snapshot is a copy. Editing the wavetable afterwards does not change what is already in the Library.</p>
+
+    <h3 id="letters"><span class="sn">8.2</span> Bank letters and the ceiling</h3>
+    <p>Each entry is labelled with the bank letter it will land in. The first 32 fill A, the next 32 fill B, and so on to D. The counter reads <strong>n / 128</strong>, which is the whole WavPak: four letters of 32.</p>
+
+    <h3 id="package"><span class="sn">8.3</span> Package to WavPak</h3>
+    <p><span class="ui">Package &rarr; WavPak (.zip)</span> writes the entire Library into the Osiris folder structure and downloads it as a single zip. It packages at the Osiris standard format: 16-bit, 44.1 kHz, 32 waveforms of 256 samples, separated into A, B, C and D.</p>
+    <div class="note">
+      <b>When to use Convert instead</b>
+      The Library packages at the standard format only. If you need a different sample rate, bit depth, wavetable length or wave length, use <a href="#convert">Convert</a>, which exposes all of them.
+    </div>
+
+    <div class="steps">
+      <b>Building a full WavPak</b>
+      <ol>
+        <li>Open the Library tab and turn on <span class="ui">Auto-collect on Generate / Save</span>.</li>
+        <li>Hit <span class="ui">&#9889; Generate</span>, pick a generator, set Coherence, and edit the result if you want to.</li>
+        <li>Repeat. Each generated or saved wavetable drops into the Library on its own.</li>
+        <li>Stop at 32 for one bank letter, 64 for two, or 128 for the full set.</li>
+        <li><span class="ui">Package &rarr; WavPak (.zip)</span>, then unzip onto the SD card.</li>
+      </ol>
+    </div>
+
+    <!-- 9 -->
+    <h2 id="convert"><span class="cn">Chapter 9</span>Convert to WavPak</h2>
+
+    <p class="lead">Convert is the original app's batch export, and it does the same job here. Use it when you need control over the format rather than the standard one.</p>
+
+    <h3 id="cv-settings"><span class="sn">9.1</span> The settings</h3>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th>Setting</th><th>Choices</th></tr></thead>
+      <tbody>
+        <tr><td>Sample Rate</td><td>8000 to 96000. Written into the file header; the sample data itself is not resampled, exactly as the original app behaved.</td></tr>
+        <tr><td>Bit Depth</td><td>8, 16 or 32. This one is a real requantization, so 8-bit genuinely sounds like 8-bit.</td></tr>
+        <tr><td>Bank Length</td><td>16, 32 or 64 waveforms per wavetable. Osiris expects 32.</td></tr>
+        <tr><td>Wave Length</td><td>8 to 2048 samples per waveform. Osiris expects 256.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>The queue works like the Library: <span class="ui">+ Add current wavetable</span>, <span class="ui">+ Add saved .wav files&hellip;</span>, <span class="ui">Clear queue</span>, up to 128 wavetables. <span class="ui">Convert &amp; download .zip</span> writes the lot.</p>
+
+    <h3 id="cv-separate"><span class="sn">9.2</span> Separating into A to D</h3>
+    <p>With <span class="ui">Separate into WavPak banks A&ndash;D</span> checked, the zip contains <code>Osiris/A</code>, <code>Osiris/B</code>, <code>Osiris/C</code> and <code>Osiris/D</code>, filled 32 wavetables per letter, capped at 128. That is the card layout, ready to unzip.</p>
+    <p>Unchecked, you get the converted files without the folder structure, which is what you want when you are re-encoding a handful of wavetables rather than building a card.</p>
+
+    <h3 id="faithful"><span class="sn">9.3</span> Faithful and Corrected</h3>
+    <p>The original Convert has a quirk. At a Wave Length above 256, or a Bank Length above 32, it reads past the end of its waveform buffers and writes a specific tail into the file.</p>
+    <p><strong>Faithful</strong>, the default, reproduces that behaviour exactly. Banks you built years ago on the desktop app stay bit identical when you rebuild them here.</p>
+    <p><strong>Corrected mode</strong> zero-pads and clamps instead, giving clean results at those settings.</p>
+    <div class="note">
+      <b>At standard settings they are identical</b>
+      The quirk only appears above 256 samples per waveform or above 32 waveforms per wavetable. At the Osiris standard of 32 by 256, Faithful and Corrected produce the same file, so the choice does not matter.
+    </div>
+
+    <h3 id="sdcard"><span class="sn">9.4</span> Onto the SD card</h3>
+    <p>Unzip the download onto the Micro SD card so the A, B, C and D folders sit where Osiris expects them, then put the card back in the module. Audio on the card is 16-bit, 44.1 kHz.</p>
+
+    <!-- 10 -->
+    <h2 id="files"><span class="cn">Chapter 10</span>Files, fidelity, help</h2>
+
+    <h3 id="save-wt"><span class="sn">10.1</span> What Save Wavetable writes</h3>
+    <p>One mono WAV containing all 32 waveforms end to end, 256 samples each, at 44.1 kHz and 16-bit. It is the post-effect result that gets written, not the source waveforms, so what you saved is what you heard.</p>
+    <p>This is the working file. <span class="ui">Load Wavetable</span> reads it back, and the Library and the Convert queue both accept it.</p>
+
+    <h3 id="naming"><span class="sn">10.2</span> File names</h3>
+    <p>Saved wavetables are named <code>Osiris_WT_01.wav</code>, <code>Osiris_WT_02.wav</code> and so on, counting up through the session. Each file is one wavetable. It is never a bank, whatever the file browser makes you feel.</p>
+
+    <h3 id="fidelity"><span class="sn">10.3</span> Fidelity to the original</h3>
+    <p>The wavetable engine is a port of the original, not a reimplementation of it. All twelve effects, the FFT conventions and the harmonic model were verified against the original C++ to within floating point rounding, on the order of 1e-5.</p>
+    <p>In practice: a wavetable built here from the same input is intended to match what the desktop app produced from it.</p>
+
+    <h3 id="desktop"><span class="sn">10.4</span> The desktop edition</h3>
+    <p>The Mac application still exists and still works where it runs. Its manual still describes its own behaviour correctly. Wavetables move between the two in either direction, since both write the same WAV format.</p>
+    <p>The web edition is where the new features are, and it is the version that survives the next platform change. If you are choosing, choose this one.</p>
+
+    <h3 id="help"><span class="sn">10.5</span> Getting help</h3>
+    <p>Support runs through the <a href="https://hub.modbap.com">Modbap Hub</a>. Open a case there and it keeps your question, the answer, and anything attached to it in one place both sides can still read later.</p>
+
+    <footer>
+      <span>Modbap by Beatppl &middot; OsirisEdit Web &middot; Manual v1.0</span>
+      <span class="foot-links">
+        <a href="../">Editor</a>
+        <a href="https://plugins.modbap.com">Software</a>
+        <a href="https://hub.modbap.com">Support</a>
+        <a href="https://modbap.com">Shop</a>
+      </span>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function(){
+  var rail = document.getElementById('rail');
+  var toggle = document.getElementById('toc-toggle');
+
+  toggle.addEventListener('click', function(){
+    var open = rail.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  rail.addEventListener('click', function(e){
+    if(e.target.tagName === 'A' && window.matchMedia('(max-width:1020px)').matches){
+      rail.classList.remove('open');
+      toggle.setAttribute('aria-expanded','false');
+    }
+  });
+
+  /* scrollspy: light the deepest heading currently in view */
+  var links = Array.prototype.slice.call(rail.querySelectorAll('a[href^="#"]'));
+  var map = {};
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) map[el.id] = a;
+  });
+  var targets = Object.keys(map).map(function(id){ return document.getElementById(id); });
+
+  function spy(){
+    var top = window.scrollY + 140, current = null;
+    for(var i = 0; i < targets.length; i++){
+      if(targets[i].offsetTop <= top) current = targets[i];
+    }
+    links.forEach(function(a){ a.classList.remove('on'); });
+    if(current){
+      var a = map[current.id];
+      a.classList.add('on');
+      var sub = a.closest('.sub');
+      if(sub){ var ch = sub.previousElementSibling; if(ch) ch.classList.add('on'); }
+      if(!window.matchMedia('(max-width:1020px)').matches){
+        var r = a.getBoundingClientRect(), rr = rail.getBoundingClientRect();
+        if(r.top < rr.top + 20 || r.bottom > rr.bottom - 20){
+          rail.scrollTop += (r.top - rr.top) - rail.clientHeight / 2;
+        }
+      }
+    }
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if(ticking) return; ticking = true;
+    requestAnimationFrame(function(){ spy(); ticking = false; });
+  }, {passive:true});
+  window.addEventListener('resize', spy);
+  spy();
+})();
+</script>
+</body>
+</html>
