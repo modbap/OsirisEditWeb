@@ -1,3 +1,33 @@
+/*
+ * OsirisEdit Web: DSP core (wave.js)
+ *
+ * Copyright (C) 2026 Modbap Modular (Beatppl Inc.)
+ * Portions Copyright (C) 2017 Andrew Belt, developed for Synthesis Technology.
+ *
+ * MODIFIED WORK. This file is a port of the upstream sources src/wave.cpp
+ * and src/math.cpp, translated from C++ to ES modules by Modbap Modular in
+ * 2026. The pffft dependency was replaced with an in-tree real FFT that
+ * reproduces pffft's "ordered" packing. The effect math, effect order, FFT
+ * scaling and harmonic conventions are unchanged from upstream.
+ * Upstream: https://github.com/AndrewBelt/WaveEdit (GPL-3.0)
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * See NOTICE.md in this repository for the full lineage and the GPL v3
+ * section 5(a) statement of modifications.
+ */
+
 // wave.js — faithful 1:1 port of OsirisEdit src/wave.cpp + src/math.cpp
 // Constants and conventions match the original exactly.
 //   WAVE_LEN = 256, RFFT scaled by 1/N, harmonics = magnitude * 2.
