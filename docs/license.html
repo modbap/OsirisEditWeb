@@ -1,0 +1,158 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>OsirisEdit Web: Open Source &amp; License</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+  :root{--paper:#f5f2ed;--paper-warm:#ede9e2;--ink:#191714;--muted:#8c877f;--line:#d5cfc6;
+    --rose:#AC296C;--blue:#0489D8;--ui:'Montserrat',sans-serif;--body:'Inter',sans-serif;--logo:'Barlow Condensed',sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper-warm);color:var(--ink);font-family:var(--body);line-height:1.6;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--rose);padding-bottom:18px;margin-bottom:8px}
+  .wordmark{font-family:var(--logo);font-weight:800;font-size:34px;line-height:.9;text-transform:uppercase;letter-spacing:-.01em}
+  .wordmark .edit{color:var(--rose)}
+  .wordmark .web{font-family:var(--ui);font-weight:500;font-size:12px;letter-spacing:.14em;color:var(--muted);vertical-align:7px;margin-left:10px}
+  .mmark{font-family:var(--logo);font-weight:800;font-size:30px;line-height:.8}
+  .mmark .dot{color:var(--blue)}
+  .doctitle{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:6px 0 30px}
+  h2{font-family:var(--ui);font-weight:700;font-size:20px;letter-spacing:-.01em;margin:34px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+  h2:first-of-type{border-top:none;padding-top:0}
+  h3{font-family:var(--ui);font-weight:600;font-size:14px;letter-spacing:.02em;margin:20px 0 4px;color:var(--rose)}
+  p{margin:8px 0}
+  ul{margin:8px 0 8px 0;padding-left:20px}
+  li{margin:5px 0}
+  code{font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:.88em;background:var(--paper);
+    border:1px solid var(--line);border-radius:3px;padding:1px 5px}
+  .lead{font-size:17px;color:var(--ink)}
+  .muted{color:var(--muted)}
+  .pill{display:inline-block;font-family:var(--ui);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    background:var(--rose);color:#fff;border-radius:10px;padding:2px 9px;vertical-align:2px;margin-left:8px}
+  .note{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:0 6px 6px 0;padding:12px 14px;margin:14px 0}
+  .warn{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--rose);border-radius:0 6px 6px 0;padding:12px 14px;margin:14px 0}
+  .stack{margin:14px 0;padding-left:0;list-style:none}
+  .stack li{padding:10px 0;border-top:1px solid var(--line)}
+  .stack li:first-child{border-top:none}
+  .stack .who{font-family:var(--ui);font-weight:700;font-size:14px}
+  .stack .meta{font-family:var(--ui);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .btnrow{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 4px}
+  .btn{display:inline-block;font-family:var(--ui);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    text-decoration:none;padding:10px 16px;border-radius:6px;border:1px solid var(--rose);background:var(--rose);color:#fff}
+  .btn.alt{background:transparent;color:var(--rose)}
+  .btn:hover{opacity:.85}
+  .nowarranty{font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:12.5px;line-height:1.7;
+    background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 16px;margin:14px 0;text-transform:uppercase}
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  a{color:var(--blue)}
+  .ver{font-family:var(--ui);font-size:12px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="wordmark">OSIRIS<span class="edit">EDIT</span><span class="web">WEB</span></div>
+    </div>
+    <div class="mmark">m<span class="dot">.</span></div>
+  </header>
+  <div class="doctitle">Open Source &amp; License · legal notices</div>
+
+  <p class="lead">OsirisEdit Web is <strong>free software</strong>, released under the
+  <strong>GNU General Public License, version 3</strong>. You are free to run it, study it,
+  change it, and share it. This page is the Appropriate Legal Notice required by section 5(d)
+  of that license.</p>
+
+  <p><strong>Copyright &copy; 2026 Modbap Modular (Beatppl Inc.)</strong><br>
+  Portions <strong>copyright &copy; 2017 Andrew Belt</strong>, developed for Synthesis Technology.</p>
+
+  <div class="btnrow">
+    <a class="btn" href="https://github.com/modbap/OsirisEditWeb" target="_blank" rel="noopener">View Source Code</a>
+    <a class="btn alt" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL v3</a>
+    <a class="btn alt" href="https://github.com/modbap/OsirisEditWeb/blob/main/NOTICE.md" target="_blank" rel="noopener">Notices &amp; Lineage</a>
+  </div>
+
+  <h2>Lineage</h2>
+  <p>This editor descends from prior open-source work in three stages:</p>
+  <ul class="stack">
+    <li>
+      <div class="who"><a href="https://github.com/AndrewBelt/WaveEdit" target="_blank" rel="noopener">WaveEdit</a></div>
+      <div class="meta">&copy; 2017 Andrew Belt, developed for Synthesis Technology · GPL-3.0</div>
+      <p>The original C++ / OpenGL wavetable editor, and the source of the DSP engine used here.</p>
+    </li>
+    <li>
+      <div class="who"><a href="https://github.com/modbap/OsirisEdit" target="_blank" rel="noopener">OsirisEdit</a></div>
+      <div class="meta">&copy; 2021 Modbap Modular · portions &copy; 2017 Andrew Belt · GPL-3.0</div>
+      <p>The C++ desktop editor, a modified version of WaveEdit adapted to the Modbap Osiris hardware
+      spec: Osiris terminology, the Convert / WavPak SD-card workflow, and clipboard additions.</p>
+    </li>
+    <li>
+      <div class="who">OsirisEdit Web <span class="pill">this app</span></div>
+      <div class="meta">&copy; 2026 Modbap Modular · portions &copy; 2017 Andrew Belt · GPL-3.0</div>
+      <p>The browser edition. The user interface was rebuilt on HTML, Canvas and Web Audio; the DSP
+      core was ported from the C++ rather than rewritten, and is verified against it.</p>
+    </li>
+  </ul>
+
+  <h2>This is a modified version</h2>
+  <div class="warn">
+    <p style="margin-top:0"><strong>OsirisEdit Web is a MODIFIED version of WaveEdit. It is not the
+    original program.</strong> Modbap Modular is responsible for these modifications, and for any
+    problems they introduce. Do not report issues with this edition to the upstream authors.</p>
+    <p style="margin-bottom:0"><strong>Neither Andrew Belt nor Synthesis Technology endorses,
+    sponsors, or supports this edition.</strong> Their names appear here only to give the credit
+    the license requires.</p>
+  </div>
+  <p>This repository is not a Git fork of WaveEdit: it shares no build system, no language, and no
+  commit history with it. That is a fact about repository mechanics, not about copyright. Because
+  the DSP was <em>ported</em> from the upstream C++ rather than independently reimplemented, this
+  program <strong>is a derivative work</strong> of WaveEdit and carries the same license.
+  The file-by-file statement of changes is in
+  <a href="https://github.com/modbap/OsirisEditWeb/blob/main/NOTICE.md" target="_blank" rel="noopener">NOTICE.md</a>.</p>
+
+  <h2>Your rights</h2>
+  <p>Under the GNU GPL v3 you may:</p>
+  <ul>
+    <li><strong>Run</strong> this program for any purpose, commercial or otherwise, with no fee and
+      no permission needed.</li>
+    <li><strong>Study</strong> how it works and change it. The complete source is published, and the
+      pages you are running are the source.</li>
+    <li><strong>Redistribute</strong> copies, modified or not.</li>
+  </ul>
+  <p>The one condition is reciprocity: anything you distribute that is built on this program must
+  itself be released under the GPL v3, with source, and must keep these copyright notices and state
+  what you changed. See the
+  <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">full license text</a>
+  for the exact terms.</p>
+
+  <h2>Source code</h2>
+  <p>The complete corresponding source for this program is at
+  <a href="https://github.com/modbap/OsirisEditWeb" target="_blank" rel="noopener">github.com/modbap/OsirisEditWeb</a>.
+  Upstream source is at
+  <a href="https://github.com/AndrewBelt/WaveEdit" target="_blank" rel="noopener">github.com/AndrewBelt/WaveEdit</a>
+  and <a href="https://github.com/modbap/OsirisEdit" target="_blank" rel="noopener">github.com/modbap/OsirisEdit</a>.</p>
+
+  <h2>Third-party components</h2>
+  <div class="note">This edition <strong>bundles no third-party code</strong>. The upstream native
+  dependencies were all replaced during the port: <strong>pffft</strong> by an in-tree real FFT that
+  reproduces its ordered packing, <strong>Dear ImGui</strong> and <strong>SDL2</strong> by browser
+  APIs, <strong>libsamplerate</strong> and <strong>libsndfile</strong> by in-tree resampling and WAV
+  code, and ZIP writing by an in-tree CRC-32 + STORE writer. <code>jsdom</code> is a test-only
+  dependency and is never served to the browser.</div>
+  <p class="muted">The typefaces Barlow Condensed, Montserrat and Inter are loaded at runtime from
+  the Google Fonts CDN. No font files are hosted or redistributed here.</p>
+
+  <h2>No warranty</h2>
+  <div class="nowarranty">
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+    without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU General Public License for more details.
+  </div>
+  <p>You should have received a copy of the GNU General Public License along with this program.
+  If not, see <a href="https://www.gnu.org/licenses/" target="_blank" rel="noopener">gnu.org/licenses</a>.</p>
+
+  <footer>
+    <span>Modbap Modular · Beatppl</span>
+    <span class="ver">GPL-3.0 · see <a href="https://github.com/modbap/OsirisEditWeb/blob/main/NOTICE.md" target="_blank" rel="noopener">NOTICE.md</a> for the full statement of modifications</span>
+  </footer>
+</div>

@@ -1,3 +1,33 @@
+/*
+ * OsirisEdit Web: application shell, editor and audio engine (app.js)
+ *
+ * Copyright (C) 2026 Modbap Modular (Beatppl Inc.)
+ * Portions Copyright (C) 2017 Andrew Belt, developed for Synthesis Technology.
+ *
+ * MODIFIED WORK. This file replaces the upstream ImGui / OpenGL / SDL2
+ * presentation layer of src/ui.cpp and its companions. The interface was
+ * rebuilt on HTML, Canvas 2D and the Web Audio API (AudioWorklet for morph
+ * playback) by Modbap Modular in 2026, tracking upstream behavior. It forms
+ * one combined program with the ported DSP core in src/wave.js.
+ * Upstream: https://github.com/AndrewBelt/WaveEdit (GPL-3.0)
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * See NOTICE.md in this repository for the full lineage and the GPL v3
+ * section 5(a) statement of modifications.
+ */
+
 import { Wave, WAVE_LEN, EFFECTS_LEN, EffectID, effectNames, RFFT, IRFFT } from './wave.js';
 import { convertToWavPak, parseWavetableWav, SAMPLE_RATES, BIT_DEPTHS, BANK_SIZES, WAVE_LENGTHS, WAVETABLE_LENGTHS } from './wavpak.js';
 import { generateWavetable, GENERATORS } from './generate.js';

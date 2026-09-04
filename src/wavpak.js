@@ -1,3 +1,34 @@
+/*
+ * OsirisEdit Web: Convert / WavPak export (wavpak.js)
+ *
+ * Copyright (C) 2026 Modbap Modular (Beatppl Inc.)
+ * Portions Copyright (C) 2017 Andrew Belt, developed for Synthesis Technology.
+ *
+ * MODIFIED WORK. This file is a port of the upstream src/ui.cpp menuConvert
+ * routine and the Bank::saveWAV overload, translated from C++ to ES modules by
+ * Modbap Modular in 2026. The Convert option arrays are carried verbatim from
+ * src/ui.cpp. The desktop folder-tree output was replaced with an in-browser
+ * ZIP download (in-tree CRC-32 + STORE writer, no ZIP library) whose internal
+ * paths mirror the desktop A/B/C/D layout.
+ * Upstream: https://github.com/AndrewBelt/WaveEdit (GPL-3.0)
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * See NOTICE.md in this repository for the full lineage and the GPL v3
+ * section 5(a) statement of modifications.
+ */
+
 // wavpak.js — Osiris Convert / WavPak export.
 //
 // Faithful to OsirisEdit's Convert (src/ui.cpp menuConvert + Bank::saveWAV overload):

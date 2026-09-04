@@ -1,3 +1,28 @@
+/*
+ * OsirisEdit Web: static development server (serve.mjs)
+ *
+ * Copyright (C) 2026 Modbap Modular (Beatppl Inc.)
+ *
+ * Original work by Modbap Modular, 2026. No upstream counterpart. Part of the
+ * combined OsirisEdit Web program and licensed under the same terms.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * See NOTICE.md in this repository for the full lineage and the GPL v3
+ * section 5(a) statement of modifications.
+ */
+
 // serve.mjs — minimal static dev server (no dependencies).
 // Run: npm run serve   →   http://localhost:5173
 import { createServer } from 'node:http';
